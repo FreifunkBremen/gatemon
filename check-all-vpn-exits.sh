@@ -1,7 +1,9 @@
 #! /usr/bin/env bash
 
-PATH=/bin:/usr/bin:/sbin:/usr/sbin
+# Set path to a save default
+PATH=/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin
 
+# Name of runfile
 RUNFILE="/run/$(basename $(readlink -f $0))"
 
 # Script finish job
@@ -25,17 +27,25 @@ NETWORK4_BASE='10.196.0.'
 NETWORK6_BASE='2001:bf7:540::'
 NETWORK_DEVICE='ffhb-mesh'
 HOST_TO_FETCH='meineip.moritzrudert.de'
-IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A)"
-IP6_TO_FETCH="$(dig +short ${HOST_TO_FETCH} AAAA)"
 VPN_NUMBER=6
 
-# Generate temporary file
-TMP_FILE="$(mktemp)"
+# Include config if exists
+if [ -e /etc/check-all-vpn-exits.cfg ]; then
+  . /etc/check-all-vpn-exits.cfg
+fi
 
+# Resolve host for HTTP check
+IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A)"
+IP6_TO_FETCH="$(dig +short ${HOST_TO_FETCH} AAAA)"
+
+# Check if resolve was successful
 if [ -z "$IP4_TO_FETCH" -o -z "$IP6_TO_FETCH" ]; then
   echo 'Failed to resolve hostname!' >&2
   exit 1
 fi
+
+# Generate temporary file
+TMP_FILE="$(mktemp)"
 
 echo '{"vpn-servers":[' > "$TMP_FILE"
 
@@ -47,7 +57,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo -n ', "ntp_ipv4":' >> "$TMP_FILE"
 
-  if /usr/lib/nagios/plugins/check_ntp_time -H ${NETWORK4_BASE}${GATE} >/dev/null; then
+  if check_ntp_time -H ${NETWORK4_BASE}${GATE} >/dev/null; then
     echo -n '1' >> "$TMP_FILE"
   else
     echo -n '0' >> "$TMP_FILE"
@@ -55,7 +65,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo -n ', "ntp_ipv6":' >> "$TMP_FILE"
 
-  if /usr/lib/nagios/plugins/check_ntp_time -H ${NETWORK6_BASE}${GATE} >/dev/null; then
+  if check_ntp_time -H ${NETWORK6_BASE}${GATE} >/dev/null; then
     echo -n '1' >> "$TMP_FILE"
   else
     echo -n '0' >> "$TMP_FILE"
@@ -63,7 +73,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo -n ', "dhcp":' >> "$TMP_FILE"
 
-  if /usr/lib/nagios/plugins/check_dhcp -s ${NETWORK4_BASE}${GATE} -u -i $NETWORK_DEVICE -t 10 >/dev/null 2>&1; then
+  if check_dhcp -s ${NETWORK4_BASE}${GATE} -u -i $NETWORK_DEVICE -t 30 >/dev/null; then
     echo -n '1' >> "$TMP_FILE"
   else
     echo -n '0' >> "$TMP_FILE"
@@ -113,5 +123,6 @@ done
 
 echo "], \"lastupdated\": \"$(date --iso-8601=seconds)\"}" >> "$TMP_FILE"
 
+# Move to target
 mv "$TMP_FILE" "$TARGET_FILE"
 chmod 644 "$TARGET_FILE"
