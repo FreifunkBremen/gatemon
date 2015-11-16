@@ -36,8 +36,8 @@ API_TOKEN=''
 MESHMON_NAME=''
 MESHMON_PROVIDER=''
 
-NETWORK4_BASE='10.196.0.'
-NETWORK6_BASE='2001:bf7:540::'
+SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
+
 NETWORK_DEVICE='ffhb-mesh'
 HOST_TO_FETCH='meineip.moritzrudert.de'
 VPN_NUMBER=6
@@ -45,6 +45,17 @@ VPN_NUMBER=6
 # Include config if exists
 if [ -e /etc/check-all-vpn-exits.cfg ]; then
   . /etc/check-all-vpn-exits.cfg
+fi
+
+TMP_NETWORK4_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
+TMP_NETWORK6_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
+
+if [ -n "$TMP_NETWORK4_BASE" ]; then
+  NETWORK4_BASE="$TMP_NETWORK4_BASE"
+fi
+
+if [ -n "$TMP_NETWORK6_BASE" ]; then
+  NETWORK6_BASE="$TMP_NETWORK6_BASE"
 fi
 
 # Resolve host for HTTP check
