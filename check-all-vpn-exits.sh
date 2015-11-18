@@ -18,6 +18,10 @@ function finish {
   if [ -n "$TMP_FILE" ]; then
     rm -f "$TMP_FILE"
   fi
+
+  if [ -n "$IP6_ROUTER_TMP_FILE" ]; then
+    rm -rf "$IP6_ROUTER_TMP_FILE"
+  fi
 }
 
 trap finish EXIT
@@ -71,6 +75,11 @@ fi
 # Generate temporary file
 TMP_FILE="$(mktemp)"
 
+# Generate temporary file for IPv6 router check
+IP6_ROUTER_TMP_FILE="$(mktemp)"
+
+rdisc6 -r 5 -w 10000 -m "$NETWORK_DEVICE" | grep 'Recursive DNS server' | sort | sort -u | awk '{ print $5 }' > "$IP6_ROUTER_TMP_FILE"
+
 function do_check() {
   echo -n "\"$1\":[{"
 
@@ -111,6 +120,14 @@ for GATE in $(seq 1 $VPN_NUMBER); do
   echo -n ', "addresses":[{"ipv4":' >> "$TMP_FILE"
 
   if check_dhcp -s ${NETWORK4_BASE}${GATE} -u -i $NETWORK_DEVICE -t 30 >/dev/null; then
+    echo -n '1' >> "$TMP_FILE"
+  else
+    echo -n '0' >> "$TMP_FILE"
+  fi
+
+  echo -n ', "ipv6": ' >> "$TMP_FILE"
+
+  if grep -Eq "^${NETWORK6_BASE}${GATE}\$" "$IP6_ROUTER_TMP_FILE"; then
     echo -n '1' >> "$TMP_FILE"
   else
     echo -n '0' >> "$TMP_FILE"
