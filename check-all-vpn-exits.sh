@@ -3,6 +3,14 @@
 # Set path to a save default
 PATH=/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin
 
+if [ "$1" = 'check_ipv6' ]; then
+  if rdisc6 -r 5 -w 10000 -m "$2" | grep 'Recursive DNS server' | sort | sort -u | awk '{ print $5 }' | grep -Eq "^$3\$"; then
+    exit 0
+  else
+    exit 1
+  fi
+fi
+
 # Name of runfile
 RUN_FILE="/run/$(basename $(readlink -f $0))"
 
@@ -17,10 +25,6 @@ function finish {
 
   if [ -n "$TMP_FILE" ]; then
     rm -f "$TMP_FILE"
-  fi
-
-  if [ -n "$IP6_ROUTER_TMP_FILE" ]; then
-    rm -rf "$IP6_ROUTER_TMP_FILE"
   fi
 }
 
@@ -51,16 +55,8 @@ if [ -e /etc/check-all-vpn-exits.cfg ]; then
   . /etc/check-all-vpn-exits.cfg
 fi
 
-TMP_NETWORK4_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
-TMP_NETWORK6_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
-
-if [ -n "$TMP_NETWORK4_BASE" ]; then
-  NETWORK4_BASE="$TMP_NETWORK4_BASE"
-fi
-
-if [ -n "$TMP_NETWORK6_BASE" ]; then
-  NETWORK6_BASE="$TMP_NETWORK6_BASE"
-fi
+NETWORK4_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
+NETWORK6_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
 
 # Resolve host for HTTP check
 IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A)"
@@ -75,25 +71,25 @@ fi
 # Generate temporary file
 TMP_FILE="$(mktemp)"
 
-# Generate temporary file for IPv6 router check
-IP6_ROUTER_TMP_FILE="$(mktemp)"
-
-rdisc6 -r 5 -w 10000 -m "$NETWORK_DEVICE" | grep 'Recursive DNS server' | sort | sort -u | awk '{ print $5 }' > "$IP6_ROUTER_TMP_FILE"
-
 function do_check() {
   echo -n "\"$1\":[{"
 
   COUNTER=0
   for HOST in $2 $3; do
     let COUNTER=COUNTER+1
+    CHECK_COMMAND="$4"
 
     if grep -q '\.' <<<"$HOST"; then
       echo -n '"ipv4":'
     else
       echo -n '"ipv6":'
+
+      if [ -n "$5" ]; then
+        CHECK_COMMAND="$5"
+      fi
     fi
 
-    if $4 $HOST >/dev/null; then
+    if $CHECK_COMMAND $HOST >/dev/null; then
       echo -n '1'
     else
       echo -n '0'
@@ -117,23 +113,11 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   do_check 'ntp' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" 'check_ntp_time -H' >> "$TMP_FILE"
 
-  echo -n ', "addresses":[{"ipv4":' >> "$TMP_FILE"
+  echo ', ' >> "$TMP_FILE"
 
-  if check_dhcp -s ${NETWORK4_BASE}${GATE} -u -i $NETWORK_DEVICE -t 30 >/dev/null; then
-    echo -n '1' >> "$TMP_FILE"
-  else
-    echo -n '0' >> "$TMP_FILE"
-  fi
+  do_check 'addresses' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "check_dhcp -u -i $NETWORK_DEVICE -t 30 -s" "/usr/local/bin/check-all-vpn-exits.sh check_ipv6 $NETWORK_DEVICE" >> "$TMP_FILE"
 
-  echo -n ', "ipv6": ' >> "$TMP_FILE"
-
-  if grep -Eq "^${NETWORK6_BASE}${GATE}\$" "$IP6_ROUTER_TMP_FILE"; then
-    echo -n '1' >> "$TMP_FILE"
-  else
-    echo -n '0' >> "$TMP_FILE"
-  fi
-
-  echo -n '}],' >> "$TMP_FILE"
+  echo ', ' >> "$TMP_FILE"
 
   do_check 'dns' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "check_dns -H $HOST_TO_FETCH -s" >> "$TMP_FILE"
 
