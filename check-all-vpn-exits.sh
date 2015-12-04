@@ -152,4 +152,4 @@ done
 echo "], \"lastupdated\": \"$(date --iso-8601=seconds)\"}" >> "$TMP_FILE"
 
 # Push to master
-curl -s -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}"
+curl -s -S -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2
