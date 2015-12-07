@@ -14,13 +14,17 @@ fi
 # Name of runfile
 RUN_FILE="/run/$(basename $(readlink -f $0))"
 
+# Check for run file
+if [ -f "$RUN_FILE" ]; then
+  echo 'Runfile does exist!' >&2
+  exit 1
+fi
+
 # Script finish job
 function finish {
-  if [ $? -eq 0 ]; then
-    # Remove run file
-    if [ -n "$RUN_FILE" ]; then
-      rm -f "$RUN_FILE"
-    fi
+  # Remove run file
+  if [ -n "$RUN_FILE" ]; then
+    rm -f "$RUN_FILE"
   fi
 
   if [ -n "$TMP_FILE" ]; then
@@ -29,14 +33,7 @@ function finish {
 }
 
 trap finish EXIT
-
-# Check for run file
-if [ -f "$RUN_FILE" ]; then
-  echo 'Runfile does exists!' >&2
-  exit 1
-else
-  touch "$RUN_FILE"
-fi
+touch "$RUN_FILE"
 
 API_URL=''
 API_TOKEN=''
@@ -152,4 +149,4 @@ done
 echo "], \"lastupdated\": \"$(date --iso-8601=seconds)\"}" >> "$TMP_FILE"
 
 # Push to master
-curl -s -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}"
+curl -s -S -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2
