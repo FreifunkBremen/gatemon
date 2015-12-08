@@ -64,8 +64,9 @@ if [ -z "$HOSTID" ]; then
   exit 1
 fi
 
-NETWORK4_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
-NETWORK6_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
+SITE_CONFIG_CONTENT=$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL")
+NETWORK4_BASE="$(echo "$SITE_CONFIG_CONTENT" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
+NETWORK6_BASE="$(echo "$SITE_CONFIG_CONTENT" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
 
 # Resolve host for HTTP check
 IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A)"
