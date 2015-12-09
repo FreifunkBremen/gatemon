@@ -52,6 +52,18 @@ if [ -e /etc/check-all-vpn-exits.cfg ]; then
   . /etc/check-all-vpn-exits.cfg
 fi
 
+# Try to find some unique host identification
+for file in /etc/machine-id /var/lib/dbus/machine-id /etc/hostid; do
+  if [ -r "$file" ]; then
+    HOSTID="$(<"$file")"
+    break
+  fi
+done
+if [ -z "$HOSTID" ]; then
+  echo 'Could not determine unique host ID.' >&2
+  exit 1
+fi
+
 NETWORK4_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
 NETWORK6_BASE="$(curl -H 'Cache-Control: no-cache' -s "$SITE_CONFIG_URL" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
 
@@ -100,7 +112,7 @@ function do_check() {
   echo '}]'
 }
 
-echo "{\"uuid\":\"$(hostid)\",\"name\":\"${MESHMON_NAME}\",\"provider\":\"${MESHMON_PROVIDER}\",\"vpn-servers\":[" > "$TMP_FILE"
+echo "{\"uuid\":\"$HOSTID\",\"name\":\"${MESHMON_NAME}\",\"provider\":\"${MESHMON_PROVIDER}\",\"vpn-servers\":[" > "$TMP_FILE"
 
 for GATE in $(seq 1 $VPN_NUMBER); do
   ip route add $IP4_TO_FETCH via ${NETWORK4_BASE}${GATE} dev $NETWORK_DEVICE
