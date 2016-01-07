@@ -52,6 +52,10 @@ if [ -e /etc/check-all-vpn-exits.cfg ]; then
   . /etc/check-all-vpn-exits.cfg
 fi
 
+# Sleep some random time
+# max 60s
+sleep $[ ( $RANDOM % 60 )  + 1 ]s
+
 # Try to find some unique host identification
 for file in /etc/machine-id /var/lib/dbus/machine-id /etc/hostid; do
   if [ -r "$file" ]; then
