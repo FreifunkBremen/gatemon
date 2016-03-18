@@ -3,13 +3,19 @@
 # Set path to a save default
 PATH=/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin
 
-if [[ "$1" = 'check_ipv6' ]]; then
-  if rdisc6 -r 5 -w 10000 -m "$2" | grep 'Recursive DNS server' | sort | sort -u | awk '{ print $5 }' | grep -Eq "^$3\$"; then
-    exit 0
+whitespace_awk() {
+    SEP="$1"
+    shift
+    awk -v 'RS=\n[\t ]*' -F' +'"$SEP"' +' "$@"
+}
+
+check_ipv6() {
+  if whitespace_awk ':' '$1 == "Recursive DNS server" && $2 == "'"$1"'" { exit 1 }' <<<"$RDISC_OUTPUT"; then
+    return 1
   else
-    exit 1
+    return 0
   fi
-fi
+}
 
 # Name of runfile
 RUN_FILE="/run/$(basename $(readlink -f $0))"
@@ -74,8 +80,8 @@ if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
   exit 1
 fi
 
-NETWORK4_BASE="$(echo "$SITE_CONFIG_CONTENT" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
-NETWORK6_BASE="$(echo "$SITE_CONFIG_CONTENT" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
+NETWORK4_BASE="$(whitespace_awk "=" '$1 == "prefix4" { gsub("^'"'"'|/.*$", "", $2); print $2 }' <<<"$SITE_CONFIG_CONTENT")"
+NETWORK6_BASE="$(whitespace_awk "=" '$1 == "prefix6" { gsub("^'"'"'|/.*$", "", $2); print $2 }' <<<"$SITE_CONFIG_CONTENT")"
 if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
   echo "Failed to extract network base addresses from site.conf (${#SITE_CONFIG_CONTENT} bytes)!" >&2
   exit 1
@@ -102,7 +108,7 @@ function do_check() {
     let COUNTER=COUNTER+1
     CHECK_COMMAND="$4"
 
-    if grep -q '\.' <<<"$HOST"; then
+    if [[ "${HOST/./}" != "$HOST" ]]; then
       echo -n '"ipv4":'
     else
       echo -n '"ipv6":'
@@ -126,6 +132,8 @@ function do_check() {
   echo '}]'
 }
 
+RDISC_OUTPUT="$(LC_ALL=C rdisc6 -r 5 -w 10000 -m "$NETWORK_DEVICE")"
+
 echo "{\"uuid\":\"$HOSTID\",\"name\":\"${MESHMON_NAME}\",\"provider\":\"${MESHMON_PROVIDER}\",\"vpn-servers\":[" > "$TMP_FILE"
 
 for GATE in $(seq 1 $VPN_NUMBER); do
@@ -138,7 +146,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo ', ' >> "$TMP_FILE"
 
-  do_check 'addresses' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "check_dhcp -u -i $NETWORK_DEVICE -t 30 -s" "/usr/local/bin/check-all-vpn-exits.sh check_ipv6 $NETWORK_DEVICE" >> "$TMP_FILE"
+  do_check 'addresses' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "check_dhcp -u -i $NETWORK_DEVICE -t 30 -s" "check_ipv6" >> "$TMP_FILE"
 
   echo ', ' >> "$TMP_FILE"
 
