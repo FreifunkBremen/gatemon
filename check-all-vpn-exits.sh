@@ -3,7 +3,7 @@
 # Set path to a save default
 PATH=/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin
 
-if [ "$1" = 'check_ipv6' ]; then
+if [[ "$1" = 'check_ipv6' ]]; then
   if rdisc6 -r 5 -w 10000 -m "$2" | grep 'Recursive DNS server' | sort | sort -u | awk '{ print $5 }' | grep -Eq "^$3\$"; then
     exit 0
   else
@@ -15,7 +15,7 @@ fi
 RUN_FILE="/run/$(basename $(readlink -f $0))"
 
 # Check for run file
-if [ -f "$RUN_FILE" ]; then
+if [[ -f "$RUN_FILE" ]]; then
   echo 'Runfile does exist!' >&2
   exit 1
 fi
@@ -23,11 +23,11 @@ fi
 # Script finish job
 function finish {
   # Remove run file
-  if [ -n "$RUN_FILE" ]; then
+  if [[ -n "$RUN_FILE" ]]; then
     rm -f "$RUN_FILE"
   fi
 
-  if [ -n "$TMP_FILE" ]; then
+  if [[ -n "$TMP_FILE" ]]; then
     rm -f "$TMP_FILE"
   fi
 }
@@ -48,35 +48,35 @@ HOST_TO_FETCH='meineip.moritzrudert.de'
 VPN_NUMBER=6
 
 # Include config if exists
-if [ -e /etc/check-all-vpn-exits.cfg ]; then
+if [[ -e /etc/check-all-vpn-exits.cfg ]]; then
   . /etc/check-all-vpn-exits.cfg
 fi
 
 # Sleep some random time
 # max 60s
-sleep $[ ( $RANDOM % 60 )  + 1 ]s
+sleep $[ ( $RANDOM % 60 ) + 1 ]s
 
 # Try to find some unique host identification
 for file in /etc/machine-id /var/lib/dbus/machine-id /etc/hostid; do
-  if [ -r "$file" ]; then
+  if [[ -r "$file" ]]; then
     HOSTID="$(<"$file")"
     break
   fi
 done
-if [ -z "$HOSTID" ]; then
+if [[ -z "$HOSTID" ]]; then
   echo 'Could not determine unique host ID.' >&2
   exit 1
 fi
 
 SITE_CONFIG_CONTENT=$(curl -H 'Cache-Control: no-cache' -s -S "$SITE_CONFIG_URL")
-if [ -z "$SITE_CONFIG_CONTENT" ]; then
+if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
   echo 'Failed to download site.conf!' >&2
   exit 1
 fi
 
 NETWORK4_BASE="$(echo "$SITE_CONFIG_CONTENT" | awk '/prefix4/{ print $3 }' | sed -e 's/[^a-zA-Z0-9.\/]//g' | awk -F/ '{ print $1 }' | sed -e 's/.$//')"
 NETWORK6_BASE="$(echo "$SITE_CONFIG_CONTENT" | awk '/prefix6/{ print $3 }' | sed -e 's/[^a-zA-Z0-9:\/]//g' | awk -F/ '{ print $1 }')"
-if [ -z "$NETWORK4_BASE" -o -z "$NETWORK6_BASE" ]; then
+if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
   echo "Failed to extract network base addresses from site.conf (${#SITE_CONFIG_CONTENT} bytes)!" >&2
   exit 1
 fi
@@ -86,7 +86,7 @@ IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A)"
 IP6_TO_FETCH="$(dig +short ${HOST_TO_FETCH} AAAA)"
 
 # Check if resolve was successful
-if [ -z "$IP4_TO_FETCH" -o -z "$IP6_TO_FETCH" ]; then
+if [[ -z "$IP4_TO_FETCH" ]] || [[ -z "$IP6_TO_FETCH" ]]; then
   echo 'Failed to resolve hostname!' >&2
   exit 1
 fi
@@ -107,7 +107,7 @@ function do_check() {
     else
       echo -n '"ipv6":'
 
-      if [ -n "$5" ]; then
+      if [[ -n "$5" ]]; then
         CHECK_COMMAND="$5"
       fi
     fi
@@ -118,7 +118,7 @@ function do_check() {
       echo -n '0'
     fi
 
-    if [ $COUNTER -ne 2 ]; then
+    if [[ $COUNTER -ne 2 ]]; then
       echo -n ','
     fi
   done
@@ -162,7 +162,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo '}]' >> "$TMP_FILE"
 
-  if [ $VPN_NUMBER -eq $GATE ]; then
+  if [[ $VPN_NUMBER -eq $GATE ]]; then
     echo '}' >> "$TMP_FILE"
   else
     echo '},' >> "$TMP_FILE"
