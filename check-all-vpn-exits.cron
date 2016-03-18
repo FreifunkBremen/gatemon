@@ -1,0 +1,1 @@
+*/10 * * * * root /usr/bin/check-all-vpn-exits.sh || echo "check exited with error"
