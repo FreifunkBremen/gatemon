@@ -37,6 +37,7 @@
 */
 
 #include <alloca.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -153,6 +154,10 @@ int get_ifindex(char *ifname) {
     return ifr.ifr_ifindex;
 }
 
+void sighandler(int signal) {
+    exit(1);
+}
+
 int main(int argc, char *argv[]) {
     int ifidx;
     uint8_t hwaddr[HWADDR_SIZE];
@@ -166,6 +171,7 @@ int main(int argc, char *argv[]) {
     struct udphdr *udp;
     struct sockaddr_in sin = {};
     struct sockaddr_ll sll = {};
+    struct sigaction sa = {};
 
     if (argc < 3) {
         fprintf(stderr, "Usage: %s <iface> <server>\n", basename(argv[0]));
@@ -246,6 +252,8 @@ int main(int argc, char *argv[]) {
     // the answer of the DHCP server if he confirms our address
 
     // set timeout
+    sa.sa_handler = sighandler;
+    sigaction(SIGALRM, &sa, NULL);
     alarm(TIMEOUT);
 
     // listen for response
