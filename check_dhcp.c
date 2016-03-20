@@ -75,7 +75,6 @@
 #define BOOTREPLY   2
 
 #define HWADDR_SIZE 6
-#define TIMEOUT 10
 #define BUFSIZE 1024
 
 #ifdef DEBUG
@@ -158,13 +157,19 @@ void sighandler(int signal) {
     exit(1);
 }
 
+void usage(char *progname) {
+    fprintf(stderr, "Usage: %s [-t <timeout>] <iface> <server>\n", basename(progname));
+}
+
 int main(int argc, char *argv[]) {
     int ifidx;
     uint8_t hwaddr[HWADDR_SIZE];
     uint32_t xid;
     struct in_addr server;
     size_t received;
+    int opt, timeout = 10;
     int outsock, insock;
+    char *ifname;
     void *buf;
     struct dhcp_packet *dhcp;
     struct iphdr *ip;
@@ -174,22 +179,40 @@ int main(int argc, char *argv[]) {
     struct sigaction sa = {};
 
     if (argc < 3) {
-        fprintf(stderr, "Usage: %s <iface> <server>\n", basename(argv[0]));
-        return -1;
     }
 
+    while ((opt = getopt(argc, argv, "ht:")) != -1) {
+        switch(opt) {
+            case 't':
+                timeout = atoi(optarg);
+                break;
+            case 'h':
+                usage(argv[0]);
+                exit(0);
+            default:
+                usage(argv[0]);
+                return -1;
+        }
+    }
+
+    if (optind > argc - 2) {
+        usage(argv[0]);
+        return -1;
+    }
+    ifname = argv[optind];
+
     // validate input
-    ifidx = get_ifindex(argv[1]);
+    ifidx = get_ifindex(ifname);
     if (ifidx < 0) {
-        fprintf(stderr, "Invalid interface: %s\n", argv[1]);
+        fprintf(stderr, "Invalid interface: %s\n", ifname);
         return -1;
     }
-    if (get_hwaddr_of_iface(argv[1], &hwaddr) < 0) {
-        fprintf(stderr, "Failed to get MAC address of interface %s.\n", argv[1]);
+    if (get_hwaddr_of_iface(ifname, &hwaddr) < 0) {
+        fprintf(stderr, "Failed to get MAC address of interface %s.\n", ifname);
         return -1;
     }
-    if (inet_pton(AF_INET, argv[2], &server.s_addr) != 1) {
-        fprintf(stderr, "Invalid server address: %s\n", argv[2]);
+    if (inet_pton(AF_INET, argv[optind+1], &server.s_addr) != 1) {
+        fprintf(stderr, "Invalid server address: %s\n", argv[optind+1]);
         return -1;
     }
 
@@ -254,7 +277,7 @@ int main(int argc, char *argv[]) {
     // set timeout
     sa.sa_handler = sighandler;
     sigaction(SIGALRM, &sa, NULL);
-    alarm(TIMEOUT);
+    alarm(timeout);
 
     // listen for response
     ip = buf;
