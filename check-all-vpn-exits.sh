@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Set path to a save default
-PATH=/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin
+PATH="$(dirname "$0"):/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
 whitespace_awk() {
     SEP="$1"
@@ -146,7 +146,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo ', ' >> "$TMP_FILE"
 
-  do_check 'addresses' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "check_dhcp -u -i $NETWORK_DEVICE -t 30 -s" "check_ipv6" >> "$TMP_FILE"
+  do_check 'addresses' "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "check_dhcp -t 30 $NETWORK_DEVICE" "check_ipv6" >> "$TMP_FILE"
 
   echo ', ' >> "$TMP_FILE"
 
