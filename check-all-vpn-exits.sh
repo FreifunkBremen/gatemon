@@ -88,8 +88,8 @@ if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
 fi
 
 # Resolve host for HTTP check
-IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A)"
-IP6_TO_FETCH="$(dig +short ${HOST_TO_FETCH} AAAA)"
+IP4_TO_FETCH="$(dig +short ${HOST_TO_FETCH} A | tail -n1)"
+IP6_TO_FETCH="$(dig +short ${HOST_TO_FETCH} AAAA | tail -n1)"
 
 # Check if resolve was successful
 if [[ -z "$IP4_TO_FETCH" ]] || [[ -z "$IP6_TO_FETCH" ]]; then
