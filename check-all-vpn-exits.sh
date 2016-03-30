@@ -136,6 +136,14 @@ RDISC_OUTPUT="$(LC_ALL=C rdisc6 -r 5 -w 10000 -m "$NETWORK_DEVICE")"
 
 echo "{\"uuid\":\"$HOSTID\",\"name\":\"${MESHMON_NAME}\",\"provider\":\"${MESHMON_PROVIDER}\",\"vpn-servers\":[" > "$TMP_FILE"
 
+# This is a really crude hack: If the gateway that has the host route is
+# unreachable on layer 2, Linux ignores the host route (if it isn't acting as a
+# router) and falls back to the route of the second-longest matching prefix
+# (probably the default route). In particular, it also ignores any other host
+# route with higher metric. Thus, we need to insert an unreachable route to a
+# network that still matches the host, but introduces minimal damage: its /127
+ip -6 route add unreachable ${IP6_TO_FETCH}/127
+
 for GATE in $(seq 1 $VPN_NUMBER); do
   ip route add $IP4_TO_FETCH via ${NETWORK4_BASE}${GATE} dev $NETWORK_DEVICE
   ip -6 route add $IP6_TO_FETCH via ${NETWORK6_BASE}${GATE} dev $NETWORK_DEVICE
@@ -179,6 +187,8 @@ for GATE in $(seq 1 $VPN_NUMBER); do
   ip -6 route del $IP6_TO_FETCH via ${NETWORK6_BASE}${GATE} dev $NETWORK_DEVICE
   ip route del $IP4_TO_FETCH via ${NETWORK4_BASE}${GATE} dev $NETWORK_DEVICE
 done
+
+ip -6 route del unreachable ${IP6_TO_FETCH}/127
 
 echo "], \"lastupdated\": \"$(date --iso-8601=seconds)\"}" >> "$TMP_FILE"
 
