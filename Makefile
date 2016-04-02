@@ -10,6 +10,7 @@ check_dhcp: check_dhcp.c
 	gcc -o $@ $+
 
 deb: check_dhcp Makefile
+	chmod 644 check-all-vpn-exits.cron
 	fpm -f -s dir -t deb -n gatemon -a native \
 		--version $(DEB_VERSION) \
 		--description 'Freifunk-Bremen gateway monitoring script' \
