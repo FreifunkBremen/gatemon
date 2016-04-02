@@ -7,7 +7,7 @@ clean:
 	rm -f $(BINS) gatemon_*.deb
 
 check_dhcp: check_dhcp.c
-	gcc -o $@ $+
+	gcc $(CFLAGS) -o $@ $+
 
 deb: check_dhcp Makefile
 	chmod 644 check-all-vpn-exits.cron
