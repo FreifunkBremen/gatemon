@@ -80,7 +80,7 @@
 #ifdef DEBUG
 #define ASSERT(stmt) \
     if(!(stmt)) { \
-        if(DEBUG) fprintf(stderr, "Packet failed validation: " #stmt "\n"); \
+        fprintf(stderr, "Packet failed validation: " #stmt "\n"); \
         continue; \
     }
 #else
