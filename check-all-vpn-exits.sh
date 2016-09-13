@@ -74,7 +74,7 @@ if [[ -z "$HOSTID" ]]; then
   exit 1
 fi
 
-SITE_CONFIG_CONTENT=$(curl -H 'Cache-Control: no-cache' -s -S "$SITE_CONFIG_URL")
+SITE_CONFIG_CONTENT=$(curl --max-time 5 -H 'Cache-Control: no-cache' -s -S "$SITE_CONFIG_URL")
 if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
   echo 'Failed to download site.conf!' >&2
   exit 1
@@ -193,4 +193,4 @@ ip -6 route del unreachable ${IP6_TO_FETCH}/127
 echo "], \"lastupdated\": \"$(date --iso-8601=seconds)\"}" >> "$TMP_FILE"
 
 # Push to master
-curl -s -S -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2
+curl --max-time 5 -s -S -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2
