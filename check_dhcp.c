@@ -142,7 +142,7 @@ int get_hwaddr_of_iface(const char *ifname, void *hwaddr) {
         return -1;
     }
 
-    strncpy(hwaddr, ifr.ifr_hwaddr.sa_data, HWADDR_SIZE);
+    memcpy(hwaddr, ifr.ifr_hwaddr.sa_data, HWADDR_SIZE);
     return 0;
 }
 
