@@ -162,7 +162,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo -n ', "uplink":[{"ipv4":' >> "$TMP_FILE"
 
-  if curl -4 --max-time 5 --silent "http://${HOST_TO_FETCH}/" >/dev/null; then
+  if curl -4 --max-time 5 --silent "http://${HOST_TO_FETCH}/" >/dev/null 2>&1; then
     echo -n '1' >> "$TMP_FILE"
   else
     echo -n '0' >> "$TMP_FILE"
@@ -170,7 +170,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
 
   echo -n ', "ipv6":' >> "$TMP_FILE"
 
-  if curl -6 --max-time 5 --silent "http://${HOST_TO_FETCH}/" >/dev/null; then
+  if curl -6 --max-time 5 --silent "http://${HOST_TO_FETCH}/" >/dev/null 2>&1; then
     echo -n '1' >> "$TMP_FILE"
   else
     echo -n '0' >> "$TMP_FILE"
@@ -193,4 +193,6 @@ ip -6 route del unreachable ${IP6_TO_FETCH}/127
 echo "], \"lastupdated\": \"$(date --iso-8601=seconds)\"}" >> "$TMP_FILE"
 
 # Push to master
-curl --max-time 5 -s -S -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2
+if ! curl --max-time 5 -s -S -X POST -d @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2; then
+  echo "Pushing result to server failed." >&2
+fi
