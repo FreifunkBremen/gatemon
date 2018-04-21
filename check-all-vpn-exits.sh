@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Set path to a save default
-PATH="$(dirname "$0"):/usr/lib/gatemon/:/usr/lib/nagios/plugins:/bin:/usr/bin:/sbin:/usr/sbin"
+PATH="$(dirname "$0"):/usr/lib/gatemon/:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
 whitespace_awk() {
     SEP="$1"
