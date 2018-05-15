@@ -1,0 +1,25 @@
+pkgbase = gatemon-git
+	pkgver = r37.615d977
+	pkgrel = 1
+	url = https://github.com/FreifunkBremen/gatemon
+	arch = any
+	license = GPL3
+	depends = monitoring-plugins
+	depends = bind-tools
+	depends = ndisc6
+	backup = etc/check-all-vpn-exits.cfg
+	source = check-all-vpn-exits.cfg
+	source = check-all-vpn-exits.sh
+	source = check-all-vpn-exits.service
+	source = check-all-vpn-exits.timer
+	source = Makefile
+	source = check_dhcp.c
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = gatemon-git
+
