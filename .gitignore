@@ -1,2 +1,5 @@
 /check_dhcp
 /*.deb
+/pkg/
+/src/
+/gatemon-git*.pkg.tar
