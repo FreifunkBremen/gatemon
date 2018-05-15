@@ -1,0 +1,10 @@
+[Unit]
+Description=Check all vpn exists (gatemon) every 10min
+
+[Timer]
+OnBootSec=5min
+OnActiveSec=10min
+OnUnitActiveSec=10min
+
+[Install]
+WantedBy=multi-user.target

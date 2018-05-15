@@ -1,0 +1,13 @@
+[Unit]
+Description=Check all vpn exists (gatemon)
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/check-all-vpn-exists
+TimeoutStopSec=300
+KillMode=process
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
