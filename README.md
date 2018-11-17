@@ -31,4 +31,5 @@ Then edit /etc/check-all-vpn-exits.cfg:
 - set API_TOKEN to a new token received from the gatemon-html server admin
 - set MESHMON_NAME to a short and descriptive name of your gatemon instance (try to stay below 20 characters)
 - set MESHMON_PROVIDER to the name or short description of your Internet provider
+- set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
