@@ -17,7 +17,7 @@ You need a secret API token from the admin of the gatemon-html server.
 ## Installation
 
 ```
-sudo apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils
+sudo apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils git make gcc curl
 git clone https://github.com/FreifunkBremen/gatemon
 cd gatemon
 make check_dhcp
@@ -31,4 +31,5 @@ Then edit /etc/check-all-vpn-exits.cfg:
 - set API_TOKEN to a new token received from the gatemon-html server admin
 - set MESHMON_NAME to a short and descriptive name of your gatemon instance (try to stay below 20 characters)
 - set MESHMON_PROVIDER to the name or short description of your Internet provider
+- set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
