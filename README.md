@@ -6,7 +6,7 @@ The script is executed periodically and tests Internet uplink, DNS, DHCP and NTP
 
 ## Requirements
 
-This script needs to be run on a host which connects to a Freifunk network as a [batman-adv](https://wiki.freifunk.net/B.A.T.M.A.N._Advanced) client, not as regular Freifunk client! So the batman-adv kernel module must be loaded, and a mesh network connection must be configured (TODO: link to documentation about this).
+This script needs to be run on a host which connects to a Freifunk network as a normal Client.
 
 Gatemon hosts must not use DHCP, since the DHCP port will be used during the tests. So a static IPv4 address should be used.
 
