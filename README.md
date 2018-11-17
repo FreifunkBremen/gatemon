@@ -17,7 +17,7 @@ You need a secret API token from the admin of the gatemon-html server.
 ## Installation
 
 ```
-sudo apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils
+sudo apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils git make gcc curl
 git clone https://github.com/FreifunkBremen/gatemon
 cd gatemon
 make check_dhcp
