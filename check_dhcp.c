@@ -290,11 +290,11 @@ int main(int argc, char *argv[]) {
         ASSERT(received >= 4*ip->ihl + sizeof(struct udphdr));
 
         udp = (struct udphdr *)((void*)ip + 4*ip->ihl);
-        ASSERT(udp->source == DHCP_SERVER_PORT);
-        ASSERT(udp->dest == DHCP_CLIENT_PORT);
-        ASSERT(ntohs(ip->tot_len) == ntohs(udp->len) + 4*ip->ihl);
-        ASSERT(ntohs(udp->len) >= sizeof(struct udphdr) + sizeof(struct dhcp_packet));
-        ASSERT(ntohs(udp->len) <= sizeof(struct udphdr) + DHCP_MAX_MSG_SIZE);
+        ASSERT(udp->uh_sport == DHCP_SERVER_PORT);
+        ASSERT(udp->uh_dport == DHCP_CLIENT_PORT);
+        ASSERT(ntohs(ip->tot_len) == ntohs(udp->uh_ulen) + 4*ip->ihl);
+        ASSERT(ntohs(udp->uh_ulen) >= sizeof(struct udphdr) + sizeof(struct dhcp_packet));
+        ASSERT(ntohs(udp->uh_ulen) <= sizeof(struct udphdr) + DHCP_MAX_MSG_SIZE);
         ASSERT(received >= ntohs(ip->tot_len));
 
         dhcp = (struct dhcp_packet *)((void*)udp + 8);
