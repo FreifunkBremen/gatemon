@@ -1,1 +1,1 @@
-*/10 * * * * root /usr/lib/gatemon/check-all-vpn-exits.sh || echo "check exited with error"
+*/10 * * * * root /opt/gatemon/check-all-vpn-exits.sh
