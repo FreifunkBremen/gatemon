@@ -14,17 +14,15 @@ Gatemon hosts should have NTP enabled to have accurate system time, since the ga
 
 You need a secret API token from the admin of the gatemon-html server.
 
-## Installation
+## Installation (as root)
 
 ```
-sudo apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils git make gcc curl
-git clone https://github.com/FreifunkBremen/gatemon
-cd gatemon
+apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils git make gcc curl
+git clone https://github.com/FreifunkBremen/gatemon /opt/gatemon
+cd /opt/gatemon
 make check_dhcp
-sudo mkdir /usr/lib/gatemon
-sudo cp check-all-vpn-exits.sh check_dhcp /usr/lib/gatemon/
-sudo cp check-all-vpn-exits.cfg /etc/
-sudo cp check-all-vpn-exits.cron /etc/cron.d/
+cp check-all-vpn-exits.cfg /etc/
+cp check-all-vpn-exits.cron /etc/cron.d/check-all-vpn-exits
 ```
 
 Then edit /etc/check-all-vpn-exits.cfg:
@@ -33,3 +31,11 @@ Then edit /etc/check-all-vpn-exits.cfg:
 - set MESHMON_PROVIDER to the name or short description of your Internet provider
 - set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
+
+## Update (as root)
+
+```
+cd /opt/gatemon
+git pull --rebase
+make check_dhcp
+```
