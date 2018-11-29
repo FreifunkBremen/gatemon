@@ -15,6 +15,7 @@ Gatemon hosts should have NTP enabled to have accurate system time, since the ga
 You need a secret API token from the admin of the gatemon-html server.
 
 ## Installation (as root)
+Further instructions for the correct setup of the networking-stuff (at the moment in german only, WIP): [Instructions in our FreifunkBremen-Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren)
 
 ```
 apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils git make gcc curl
