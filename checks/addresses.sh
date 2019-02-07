@@ -10,14 +10,8 @@ NETWORK_DEVICE="$1"
 SERVER_IP4="$2"
 SERVER_IP6="$3"
 
-if [ -z "$NETWORK_DEVICE" ]; then
-  echo ''
-  exit 1
-elif [ -z "$SERVER_IP4" ]; then
-  echo ''
-  exit 1
-elif [ -z "$SERVER_IP6" ]; then
-  echo ''
+if [[ -z "$NETWORK_DEVICE" ]] || [[ -z "$SERVER_IP4" ]] || [[ -z "$SERVER_IP6" ]]; then
+  echo "$0 <device> <ipv4> <ipv6>" >&2
   exit 1
 fi
 
@@ -34,7 +28,7 @@ exec 3>&1 4>&2
 ELAPSED_TIME="$( { time check_dhcp -t 30 "$NETWORK_DEVICE" "$SERVER_IP4" 1>&3 2>&4; } 2>&1)"
 exec 3>&- 4>&-
 
-if [ "$?" = 0 ]; then
+if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
 fi
 
@@ -50,7 +44,7 @@ exec 3>&1 4>&2
 ELAPSED_TIME="$( { time rdisc6 --retry 5 --wait 10000 -m "$NETWORK_DEVICE" | grep 'Recursive DNS server' | cut -d: -f2- | sed -e 's/[ \t]*//g' | grep "$SERVER_IP6" 1>&3 2>&4; } 2>&1)"
 exec 3>&- 4>&-
 
-if [ "$?" = 0 ]; then
+if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
 fi
 
