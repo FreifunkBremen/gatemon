@@ -4,9 +4,9 @@
 PATH="$(dirname "$0"):/usr/lib/gatemon/:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
 whitespace_awk() {
-    SEP="$1"
-    shift
-    awk -v 'RS=\n[\t ]*' -F' +'"$SEP"' +' "$@"
+  SEP="$1"
+  shift
+  awk -v 'RS=\n[\t ]*' -F' +'"$SEP"' +' "$@"
 }
 
 # Name of runfile

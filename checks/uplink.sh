@@ -11,14 +11,8 @@ NETWORK_DEVICE="$1"
 SERVER_IP4="$2"
 SERVER_IP6="$3"
 
-if [ -z "$NETWORK_DEVICE" ]; then
-  echo ''
-  exit 1
-elif [ -z "$SERVER_IP4" ]; then
-  echo ''
-  exit 1
-elif [ -z "$SERVER_IP6" ]; then
-  echo ''
+if [[ -z "$NETWORK_DEVICE" ]] || [[ -z "$SERVER_IP4" ]] || [[ -z "$SERVER_IP6" ]]; then
+  echo "$0 <device> <ipv4> <ipv6>" >&2
   exit 1
 fi
 
@@ -47,7 +41,7 @@ exec 3>&1 4>&2
 ELAPSED_TIME="$( { time curl -4 --max-time 5 --silent --output /dev/null "http://${HOST_TO_FETCH}/" 1>&3 2>&4; } 2>&1)"
 exec 3>&- 4>&-
 
-if [ "$?" = 0 ]; then
+if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
 fi
 
@@ -75,7 +69,7 @@ exec 3>&1 4>&2
 ELAPSED_TIME="$( { time curl -6 --max-time 5 --silent --output /dev/null "http://${HOST_TO_FETCH}/" 1>&3 2>&4; } 2>&1)"
 exec 3>&- 4>&-
 
-if [ "$?" = 0 ]; then
+if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
 fi
 
