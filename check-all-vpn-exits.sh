@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+set -e
+
 # Set path to a save default
 PATH="$(dirname "$0"):/usr/lib/gatemon/:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
@@ -9,8 +11,27 @@ whitespace_awk() {
   awk -v 'RS=\n[\t ]*' -F' +'"$SEP"' +' "$@"
 }
 
+API_URL=''
+API_TOKEN=''
+
+MESHMON_NAME=''
+MESHMON_PROVIDER=''
+
+SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
+
+NETWORK_DEVICE='ffhb-mesh'
+HOST_TO_FETCH='meineip.moritzrudert.de'
+VPN_NUMBER=6
+
+RUN_AS_ROOT=1
+
 # Name of runfile
 RUN_FILE="/run/$(basename $(readlink -f $0))"
+
+# Include config if exists
+if [[ -e /etc/check-all-vpn-exits.cfg ]]; then
+  . /etc/check-all-vpn-exits.cfg
+fi
 
 # Check for run file
 if [[ -f "$RUN_FILE" ]]; then
@@ -32,23 +53,6 @@ function finish {
 
 trap finish EXIT
 touch "$RUN_FILE"
-
-API_URL=''
-API_TOKEN=''
-
-MESHMON_NAME=''
-MESHMON_PROVIDER=''
-
-SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
-
-NETWORK_DEVICE='ffhb-mesh'
-HOST_TO_FETCH='meineip.moritzrudert.de'
-VPN_NUMBER=6
-
-# Include config if exists
-if [[ -e /etc/check-all-vpn-exits.cfg ]]; then
-  . /etc/check-all-vpn-exits.cfg
-fi
 
 # Sleep some random time
 # max 60s
@@ -81,6 +85,17 @@ if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
   exit 1
 fi
 
+if [ "$RUN_AS_ROOT" = '1' ]; then
+  CHECK_SUFFIX='-root'
+else
+  if [ ! -f /tmp/check-all-vpn-exits-nonroot.done ]; then
+    echo '/tmp/check-all-vpn-exits-nonroot.done not found. exiting.' >&2
+    exit 1
+  fi
+
+  CHECK_SUFFIX='-nonroot'
+fi
+
 # Generate temporary file
 TMP_FILE="$(mktemp)"
 
@@ -95,8 +110,8 @@ EOF
 for GATE in $(seq 1 $VPN_NUMBER); do
   echo "  - name: vpn$(printf '%.2d' ${GATE}).bremen.freifunk.net" >>"$TMP_FILE"
 
-  for CHECK in $(dirname "$0")/checks/*.sh; do
-    "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" >> "$TMP_FILE"
+  for CHECK in $(dirname "$0")/checks/*${CHECK_SUFFIX}.sh; do
+    "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
   done
 done
 
