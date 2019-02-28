@@ -45,9 +45,10 @@ if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
   exit 1
 fi
 
-MIN_PORT="$[ 32768 - 20 ]"
+MIN_PORT="32768"
 MAX_PORT="60999"
 sysctl -w net.ipv4.ip_local_port_range="${MIN_PORT} ${MAX_PORT}"
+MIN_PORT_USABLE="$[ $MIN_PORT - 20 ]"
 
 for GATE in $(seq 1 $VPN_NUMBER); do
   if [ -z "$(ip -4 route list $NETWORK4 table $[ 100 + $GATE ])" ]; then
@@ -55,7 +56,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
     ip route add default via ${NETWORK4_BASE}${GATE} dev ${NETWORK_DEVICE} table $[ 100 + $GATE ]
     ip rule add fwmark 0x$GATE table $[ 100 + $GATE ]
 
-    iptables -t mangle -A OUTPUT -p tcp --sport $[ $MIN_PORT + $GATE ] -j MARK --set-mark $GATE
+    iptables -t mangle -A OUTPUT -p tcp --sport $[ $MIN_PORT_USABLE + $GATE ] -j MARK --set-mark $GATE
   fi
 
   if [ -z "$(ip -6 route list $NETWORK6 table $[ 100 + $GATE ])" ]; then
@@ -63,7 +64,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
     ip -6 route add default via ${NETWORK6_BASE}${GATE} dev ${NETWORK_DEVICE} table $[ 100 + $GATE ]
     ip -6 rule add fwmark 0x$GATE table $[ 100 + $GATE ]
 
-    ip6tables -t mangle -A OUTPUT -p tcp --sport $[ $MIN_PORT + $GATE ] -j MARK --set-mark $GATE
+    ip6tables -t mangle -A OUTPUT -p tcp --sport $[ $MIN_PORT_USABLE + $GATE ] -j MARK --set-mark $GATE
   fi
 done
 
