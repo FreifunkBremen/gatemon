@@ -37,17 +37,6 @@ cat <<EOF
 EOF
 
 # IPv6
-ELAPSED_TIME=0
-STATUS_CODE=0
-
-exec 3>&1 4>&2
-ELAPSED_TIME="$( { time rdisc6 --retry 5 --wait 10000 -m "$NETWORK_DEVICE" | grep 'Recursive DNS server' | cut -d: -f2- | sed -e 's/[ \t]*//g' | grep "$SERVER_IP6" 1>&3 2>&4; } 2>&1)"
-exec 3>&- 4>&-
-
-if [[ "$?" = 0 ]]; then
-  STATUS_CODE=1
-fi
-
 cat <<EOF
-        ipv6: ${STATUS_CODE}
+        ipv6: 0
 EOF

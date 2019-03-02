@@ -18,7 +18,7 @@ You need a secret API token from the admin of the gatemon-html server.
 Further instructions for the correct setup of the networking-stuff (at the moment in german only, WIP): [Instructions in our FreifunkBremen-Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren)
 
 ```
-apt-get install monitoring-plugins-basic monitoring-plugins-standard nagios-plugins-contrib ndisc6 dnsutils git make gcc curl
+apt-get install monitoring-plugins-basic monitoring-plugins-standard dnsutils git make gcc curl
 git clone https://github.com/FreifunkBremen/gatemon /opt/gatemon
 cd /opt/gatemon
 make check_dhcp

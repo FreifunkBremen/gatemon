@@ -9,7 +9,7 @@ pkgdesc=""
 arch=('any')
 url="https://github.com/${_pkgauthor}/${_pkgname}"
 license=('GPL3')
-depends=('monitoring-plugins' 'bind-tools' 'ndisc6')
+depends=('monitoring-plugins' 'bind-tools')
 backup=('etc/check-all-vpn-exits.cfg')
 source=('check-all-vpn-exits.cfg' 'check-all-vpn-exits.sh'
 	'check-all-vpn-exits.service' 'check-all-vpn-exits.timer'

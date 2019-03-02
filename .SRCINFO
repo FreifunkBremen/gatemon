@@ -6,7 +6,6 @@ pkgbase = gatemon-git
 	license = GPL3
 	depends = monitoring-plugins
 	depends = bind-tools
-	depends = ndisc6
 	backup = etc/check-all-vpn-exits.cfg
 	source = check-all-vpn-exits.cfg
 	source = check-all-vpn-exits.sh

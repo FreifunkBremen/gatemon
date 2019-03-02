@@ -17,7 +17,6 @@ archlinux: check_dhcp Makefile
 		--url 'https://github.com/FreifunkBremen/gatemon' \
 		-d curl \
 		-d monitoring-plugins \
-		-d ndisc6 \
 		-d bind-tools \
 		check-all-vpn-exits.sh=/opt/gatemon/check-all-vpn-exits.sh \
 		check_dhcp=/opt/gatemon/check_dhcp \
@@ -43,7 +42,6 @@ deb: check_dhcp Makefile
 		--url 'https://github.com/FreifunkBremen/gatemon' \
 		-d 'monitoring-plugins-basic | nagios-plugins-basic' \
 		-d 'monitoring-plugins-standard | nagios-plugins-standard' \
-		-d ndisc6 \
 		-d dnsutils \
 		check-all-vpn-exits.sh=/opt/gatemon/check-all-vpn-exits.sh \
 		check_dhcp=/opt/gatemon/check_dhcp \
