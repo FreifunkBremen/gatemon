@@ -3,3 +3,5 @@
 /pkg/
 /src/
 /gatemon-git*.pkg.tar
+/gatemon-*.pkg.tar.xz
+/libpacketmark/

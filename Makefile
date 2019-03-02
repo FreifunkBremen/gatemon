@@ -1,6 +1,6 @@
 
 DEB_VERSION:=1.0-$(shell date +%Y%m%d%H%M%S -d "$(shell git show -s --format=%cD HEAD)" )-$(shell git rev-parse HEAD | cut -c -8)
-BINS=check_dhcp
+BINS=check_dhcp libpacketmark.so
 
 all: $(BINS) deb
 clean:
@@ -8,6 +8,12 @@ clean:
 
 check_dhcp: check_dhcp.c
 	$(CC) $(CFLAGS) -o $@ $+
+
+libpacketmark.so:
+	mkdir -p libpacketmark
+	wget -q -O libpacketmark/libpacketmark.c -c https://github.com/freifunk-gluon/packages/raw/master/libs/libpacketmark/src/libpacketmark.c
+	wget -q -O libpacketmark/Makefile -c https://github.com/freifunk-gluon/packages/raw/master/libs/libpacketmark/src/Makefile
+	make -C libpacketmark
 
 archlinux: check_dhcp Makefile
 	chmod 644 check-all-vpn-exits.cron
