@@ -85,10 +85,10 @@ if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
   exit 1
 fi
 
-if [ "$RUN_AS_ROOT" = '1' ]; then
+if [[ "$RUN_AS_ROOT" = '1' ]]; then
   CHECK_SUFFIX='-root'
 else
-  if [ ! -f /tmp/check-all-vpn-exits-nonroot.done ]; then
+  if [[ ! -f /tmp/check-all-vpn-exits-nonroot.done ]]; then
     echo '/tmp/check-all-vpn-exits-nonroot.done not found. exiting.' >&2
     exit 1
   fi

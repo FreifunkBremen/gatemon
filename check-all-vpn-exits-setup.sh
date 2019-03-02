@@ -46,13 +46,13 @@ if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
 fi
 
 for GATE in $(seq 1 $VPN_NUMBER); do
-  if [ -z "$(ip -4 route list $NETWORK4 table $[ 100 + $GATE ])" ]; then
+  if [[ -z "$(ip -4 route list $NETWORK4 table $[ 100 + $GATE ])" ]]; then
     ip route add $NETWORK4 dev $NETWORK_DEVICE table $[ 100 + $GATE ]
     ip route add default via ${NETWORK4_BASE}${GATE} dev ${NETWORK_DEVICE} table $[ 100 + $GATE ]
     ip rule add fwmark 0x$GATE table $[ 100 + $GATE ]
   fi
 
-  if [ -z "$(ip -6 route list $NETWORK6 table $[ 100 + $GATE ])" ]; then
+  if [[ -z "$(ip -6 route list $NETWORK6 table $[ 100 + $GATE ])" ]]; then
     ip -6 route add $NETWORK6 dev $NETWORK_DEVICE table $[ 100 + $GATE ]
     ip -6 route add default via ${NETWORK6_BASE}${GATE} dev ${NETWORK_DEVICE} table $[ 100 + $GATE ]
     ip -6 rule add fwmark 0x$GATE table $[ 100 + $GATE ]
