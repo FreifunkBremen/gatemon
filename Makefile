@@ -11,8 +11,8 @@ check_dhcp: check_dhcp.c
 
 libpacketmark.so:
 	mkdir -p libpacketmark
-	wget -q -O libpacketmark/libpacketmark.c -c https://github.com/freifunk-gluon/packages/raw/master/libs/libpacketmark/src/libpacketmark.c
-	wget -q -O libpacketmark/Makefile -c https://github.com/freifunk-gluon/packages/raw/master/libs/libpacketmark/src/Makefile
+	curl --location --continue-at - --silent --show-error --output libpacketmark/libpacketmark.c https://github.com/freifunk-gluon/packages/raw/master/libs/libpacketmark/src/libpacketmark.c
+	curl --location --continue-at - --silent --show-error --output libpacketmark/Makefile https://github.com/freifunk-gluon/packages/raw/master/libs/libpacketmark/src/Makefile
 	make -C libpacketmark
 
 archlinux: $(BINS)
