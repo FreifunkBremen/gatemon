@@ -64,3 +64,14 @@ deb: check_dhcp Makefile
 		checks/ntp-root.sh=/opt/gatemon/checks/ntp-root.sh \
 		checks/uplink-nonroot.sh=/opt/gatemon/checks/uplink-nonroot.sh \
 		checks/uplink-root.sh=/opt/gatemon/checks/uplink-root.sh
+
+install:
+	install -Dm755 check-all-vpn-exits.sh $(DESTDIR)$(PREFIX)/opt/gatemon/check-all-vpn-exits.sh
+	install -Dm755 check_dhcp $(DESTDIR)$(PREFIX)/opt/gatemon/check_dhcp
+	install -Dm644 check-all-vpn-exits.cfg $(DESTDIR)$(PREFIX)/etc/check-all-vpn-exits.cfg
+	install -Dm644 check-all-vpn-exits.cron $(DESTDIR)$(PREFIX)/etc/cron.d/check-all-vpn-exits
+	install -Dm644 check-all-vpn-exits.service $(DESTDIR)$(PREFIX)/lib/systemd/system/check-all-vpn-exits.service
+	install -Dm644 check-all-vpn-exits.timer $(DESTDIR)$(PREFIX)/lib/systemd/system/check-all-vpn-exits.timer
+	install -Dm755 libpacketmark/libpacketmark.so $(DESTDIR)$(PREFIX)/opt/gatemon/libpacketmark/libpacketmark.so
+	install -d $(DESTDIR)$(PREFIX)/opt/gatemon/checks
+	for file in checks/*; do install -m755 "$$file" $(DESTDIR)$(PREFIX)/opt/gatemon/checks/; done
