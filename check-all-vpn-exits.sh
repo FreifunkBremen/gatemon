@@ -19,8 +19,8 @@ MESHMON_PROVIDER=''
 
 SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
 
-NETWORK_DEVICE='ffhb-mesh'
-HOST_TO_FETCH='meineip.moritzrudert.de'
+NETWORK_DEVICE='eth0'
+HOST_TO_FETCH='google.de'
 VPN_NUMBER=6
 
 RUN_AS_ROOT=1
