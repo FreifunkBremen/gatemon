@@ -7,8 +7,8 @@ pkgrel=1
 pkgdesc="Script to monitor the gateway servers of a Freifunk mesh network for outages"
 arch=('any')
 url="https://github.com/${_pkgauthor}/${_pkgname}"
-license=('GPL3')
-depends=('monitoring-plugins' 'bind-tools')
+license=('custom')
+depends=('curl' 'monitoring-plugins' 'bind-tools')
 backup=('etc/check-all-vpn-exits.cfg')
 source=("${_pkgname}"::'git+https://github.com/FreifunkBremen/gatemon.git')
 sha256sums=('SKIP')
@@ -26,4 +26,5 @@ build() {
 package() {
 	cd "${srcdir}/${_pkgname}"
 	make DESTDIR="$pkgdir/" install
+	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
