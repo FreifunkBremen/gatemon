@@ -44,6 +44,8 @@ deb: $(BINS)
 		checks/uplink-root.sh=/opt/gatemon/checks/uplink-root.sh
 
 install: $(BINS)
+	install -d $(DESTDIR)$(PREFIX)/opt
+	install -d $(DESTDIR)$(PREFIX)/opt/gatemon
 	install -Dm755 check-all-vpn-exits.sh $(DESTDIR)$(PREFIX)/opt/gatemon/check-all-vpn-exits.sh
 	install -Dm755 check_dhcp $(DESTDIR)$(PREFIX)/opt/gatemon/check_dhcp
 	install -Dm644 check-all-vpn-exits.cfg $(DESTDIR)$(PREFIX)/etc/check-all-vpn-exits.cfg
