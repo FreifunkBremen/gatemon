@@ -22,11 +22,11 @@ apt-get install monitoring-plugins-basic monitoring-plugins-standard dnsutils gi
 git clone https://github.com/FreifunkBremen/gatemon /opt/gatemon
 cd /opt/gatemon
 make check_dhcp
-cp check-all-vpn-exits.cfg /etc/
-cp check-all-vpn-exits.cron /etc/cron.d/check-all-vpn-exits
+cp gatemon.cfg /etc/
+cp gatemon.cron /etc/cron.d/gatemon
 ```
 
-Then edit /etc/check-all-vpn-exits.cfg:
+Then edit /etc/gatemon.cfg:
 - set API_TOKEN to a new token received from the gatemon-html server admin
 - set MESHMON_NAME to a short and descriptive name of your gatemon instance (try to stay below 20 characters)
 - set MESHMON_PROVIDER to the name or short description of your Internet provider

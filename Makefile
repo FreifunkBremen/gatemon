@@ -33,12 +33,12 @@ deb: $(BINS)
 install: $(BINS)
 	install -d $(DESTDIR)$(PREFIX)/opt
 	install -d $(DESTDIR)$(PREFIX)/opt/gatemon
-	install -Dm755 check-all-vpn-exits.sh $(DESTDIR)$(PREFIX)/opt/gatemon/check-all-vpn-exits.sh
+	install -Dm755 gatemon.sh $(DESTDIR)$(PREFIX)/opt/gatemon/gatemon.sh
 	install -Dm755 check_dhcp $(DESTDIR)$(PREFIX)/opt/gatemon/check_dhcp
-	install -Dm644 check-all-vpn-exits.cfg $(DESTDIR)$(PREFIX)/etc/check-all-vpn-exits.cfg
-	install -Dm644 check-all-vpn-exits.cron $(DESTDIR)$(PREFIX)/etc/cron.d/check-all-vpn-exits
-	install -Dm644 check-all-vpn-exits.service $(DESTDIR)$(PREFIX)/lib/systemd/system/check-all-vpn-exits.service
-	install -Dm644 check-all-vpn-exits.timer $(DESTDIR)$(PREFIX)/lib/systemd/system/check-all-vpn-exits.timer
+	install -Dm644 gatemon.cfg $(DESTDIR)$(PREFIX)/etc/gatemon.cfg
+	install -Dm644 gatemon.cron $(DESTDIR)$(PREFIX)/etc/cron.d/gatemon
+	install -Dm644 gatemon.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.service
+	install -Dm644 gatemon.timer $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.timer
 	install -Dm755 libpacketmark/libpacketmark.so $(DESTDIR)$(PREFIX)/opt/gatemon/libpacketmark/libpacketmark.so
 	install -d $(DESTDIR)$(PREFIX)/opt/gatemon/checks
 	for file in checks/*; do install -m755 "$$file" $(DESTDIR)$(PREFIX)/opt/gatemon/checks/; done
