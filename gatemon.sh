@@ -29,8 +29,8 @@ RUN_AS_ROOT=1
 RUN_FILE="/run/$(basename $(readlink -f $0))"
 
 # Include config if exists
-if [[ -e /etc/check-all-vpn-exits.cfg ]]; then
-  . /etc/check-all-vpn-exits.cfg
+if [[ -e /etc/gatemon.cfg ]]; then
+  . /etc/gatemon.cfg
 fi
 
 # Check for run file
@@ -88,8 +88,8 @@ fi
 if [[ "$RUN_AS_ROOT" = '1' ]]; then
   CHECK_SUFFIX='-root'
 else
-  if [[ ! -f /tmp/check-all-vpn-exits-nonroot.done ]]; then
-    echo '/tmp/check-all-vpn-exits-nonroot.done not found. exiting.' >&2
+  if [[ ! -f /tmp/gatemon-nonroot.done ]]; then
+    echo '/tmp/gatemon-nonroot.done not found. exiting.' >&2
     exit 1
   fi
 

@@ -5,7 +5,7 @@ PATH="$(dirname "$0")/..:/usr/lib/gatemon:/usr/lib/nagios/plugins:/usr/lib/monit
 
 LD_PRELOAD="$(dirname "$0")/../libpacketmark/libpacketmark.so"
 
-. "$(dirname "$0")/../check-all-vpn-exits.cfg"
+. "$(dirname "$0")/../gatemon.cfg"
 
 export TIMEFORMAT="%0R"
 

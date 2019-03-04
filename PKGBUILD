@@ -9,7 +9,7 @@ arch=('any')
 url="https://github.com/${_pkgauthor}/${_pkgname}"
 license=('custom')
 depends=('curl' 'monitoring-plugins' 'bind-tools')
-backup=('etc/check-all-vpn-exits.cfg')
+backup=('etc/gatemon.cfg')
 source=("${_pkgname}"::'git+https://github.com/FreifunkBremen/gatemon.git')
 sha256sums=('SKIP')
 

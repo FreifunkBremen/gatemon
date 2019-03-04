@@ -1,1 +1,0 @@
-*/10 * * * * root /opt/gatemon/check-all-vpn-exits.sh

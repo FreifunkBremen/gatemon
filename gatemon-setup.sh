@@ -24,8 +24,8 @@ HOST_TO_FETCH='meineip.moritzrudert.de'
 VPN_NUMBER=6
 
 # Include config if exists
-if [[ -e /etc/check-all-vpn-exits.cfg ]]; then
-  . /etc/check-all-vpn-exits.cfg
+if [[ -e /etc/gatemon.cfg ]]; then
+  . /etc/gatemon.cfg
 fi
 
 SITE_CONFIG_CONTENT=$(curl --max-time 5 --header 'Cache-Control: no-cache' --silent --show-error "$SITE_CONFIG_URL")
@@ -59,4 +59,4 @@ for GATE in $(seq 1 $VPN_NUMBER); do
   fi
 done
 
-touch /tmp/check-all-vpn-exits-nonroot.done
+touch /tmp/gatemon-nonroot.done

@@ -4,7 +4,7 @@
 # Set path to a save default
 PATH="$(dirname "$0")/..:/usr/lib/gatemon:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
-. "$(dirname "$0")/../check-all-vpn-exits.cfg"
+. "$(dirname "$0")/../gatemon.cfg"
 
 export TIMEFORMAT="%0R"
 
