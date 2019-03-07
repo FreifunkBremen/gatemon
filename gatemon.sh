@@ -88,8 +88,8 @@ fi
 if [[ "$RUN_AS_ROOT" = '1' ]]; then
   CHECK_SUFFIX='-root'
 else
-  if [[ ! -f /tmp/gatemon-nonroot.done ]]; then
-    echo '/tmp/gatemon-nonroot.done not found. exiting.' >&2
+  if [[ ! -f /run/gatemon-nonroot.done ]]; then
+    echo '/run/gatemon-nonroot.done not found. exiting.' >&2
     exit 1
   fi
 

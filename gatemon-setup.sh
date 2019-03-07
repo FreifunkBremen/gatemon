@@ -59,4 +59,4 @@ for GATE in $(seq 1 $VPN_NUMBER); do
   fi
 done
 
-touch /tmp/gatemon-nonroot.done
+touch /run/gatemon-nonroot.done
