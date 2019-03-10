@@ -27,7 +27,7 @@ ELAPSED_TIME=0
 STATUS_CODE=0
 
 exec 3>/dev/null 4>/dev/null
-ELAPSED_TIME="$( { time check_dns -H "$HOST_TO_FETCH" -s "$SERVER_IP4" 1>&3 2>&4; } 2>&1)"
+ELAPSED_TIME="$( { time dig +short +timeout=10 "$HOST_TO_FETCH" @"$SERVER_IP4" 1>&3 2>&4; } 2>&1)"
 exec 3>&- 4>&-
 
 if [[ "$?" = 0 ]]; then
@@ -43,7 +43,7 @@ ELAPSED_TIME=0
 STATUS_CODE=0
 
 exec 3>/dev/null 4>/dev/null
-ELAPSED_TIME="$( { time check_dns -H "$HOST_TO_FETCH" -s "$SERVER_IP6" 1>&3 2>&4; } 2>&1)"
+ELAPSED_TIME="$( { time dig +short +timeout=10 "$HOST_TO_FETCH" @"$SERVER_IP6" 1>&3 2>&4; } 2>&1)"
 exec 3>&- 4>&-
 
 if [[ "$?" = 0 ]]; then
