@@ -1,21 +1,35 @@
 # Gatemon
 
-Script to monitor the gateway servers of a [Freifunk](https://freifunk.net) mesh network for outages.
+Projekt, um die Gateway-Server eines [Freifunk](https://freifunk.net)-Mesh-Netzwerks
+auf Ausfaelle zu ueberwachen.
 
-The script is executed periodically and tests Internet uplink, DNS, DHCP and NTP services (both IPv4 and IPv6) on each gateway. Results are uploaded to a webserver where [gatemon-html](https://github.com/FreifunkBremen/gatemon-html) is running, which displays the latest results of all gatemons.
+Das Programm laeuft regelmaessig und ueberprueft, ob die Internet-Verbindung moeglich
+ist und DNS, DHCP und NTP funktioniert. Jeweils ueber IPv4 und IPv6.
 
-## Requirements
+Die Ergebnisse werden auf einen Webserver, auf dem [gatemon-html](https://github.com/FreifunkBremen/gatemon-html)
+laeuft, welches diese dann anzeigt.
 
-This script needs to be run on a host which connects to a Freifunk network as a normal Client.
+## Abhaengigkeiten
 
-Gatemon hosts must not use DHCP, since the DHCP port will be used during the tests. So a static IPv4 address should be used.
+Das Programm muss auf einem Rechner laufen, welcher als normaler Teilnehmer
+im Freifunk-Netz haengt.
 
-Gatemon hosts should have NTP enabled to have accurate system time, since the gatemon-html server will reject any results where the timestamp is off by more than 60 seconds.
+Dieser Rechner darf kein DHCP nutzen, da der DHCP-Port von dem DHCP-Test gebraucht wird.
+Deswegen muss dieser eine statische IPv4-Adresse konfiguriert haben.
 
-You need a secret API token from the admin of the gatemon-html server.
+Ausserdem sollte er NTP-synchronisiert sein, damit er eine akkurate Zeit hat, da
+der gatemon-html-Server die Ergebnisse ansonsten ablehnt.
 
-## Installation (as root)
-Further instructions for the correct setup of the networking-stuff (at the moment in german only, WIP): [Instructions in our FreifunkBremen-Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren)
+Danach braucht du einen geheimen Schluessel, damit dein Gatemon Daten an den zentralen
+Server senden darf.
+
+Diesen bekommst du zur Zeit von genofire, jplitza, mortzu oder ollibaba -
+einfach im Chat fragen.
+
+## Installation (als root)
+
+Anleitung, wie man einen gatemon auf einem Raspberry Pi installiert, insbesondere
+die Netzwerkkonfiguration, findest du im [Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren).
 
 ```
 apt-get install monitoring-plugins-basic monitoring-plugins-standard dnsutils git make gcc curl
@@ -26,9 +40,9 @@ cp gatemon.cfg /etc/
 cp gatemon.cron /etc/cron.d/gatemon
 ```
 
-Then edit /etc/gatemon.cfg:
-- set API_TOKEN to a new token received from the gatemon-html server admin
-- set MESHMON_NAME to a short and descriptive name of your gatemon instance (try to stay below 20 characters)
+Danach musst du /etc/gatemon.cfg bearbeite:
+- setze API_TOKEN auf den geheimen Schluessel, den du bekommen hast
+- benenne mit MESHMON_NAME kurz deinen gatemon (bleibe unter 20 Zeichen)
 - set MESHMON_PROVIDER to the name or short description of your Internet provider
 - set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
