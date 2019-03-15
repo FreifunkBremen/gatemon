@@ -1,10 +1,10 @@
 [Unit]
-Description=Check all vpn exists (gatemon)
+Description=gatemon (Check all services of every gateway)
 After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/check-all-vpn-exists
+ExecStart=/opt/gatemon/gatemon.sh
 TimeoutStopSec=300
 KillMode=process
 KillSignal=SIGINT
