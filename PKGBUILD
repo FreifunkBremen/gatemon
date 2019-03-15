@@ -26,5 +26,7 @@ build() {
 package() {
 	cd "${srcdir}/${_pkgname}"
 	make DESTDIR="$pkgdir/" install
+	mkdir "$pkgdir/usr"
+	mv "$pkgdir/lib" "$pkgdir/usr/"
 	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
