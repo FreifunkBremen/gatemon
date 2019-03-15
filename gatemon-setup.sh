@@ -58,5 +58,3 @@ for GATE in $(seq 1 $VPN_NUMBER); do
     ip -6 rule add fwmark 0x$GATE table $[ 100 + $GATE ]
   fi
 done
-
-touch /run/gatemon-nonroot.done
