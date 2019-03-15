@@ -2,7 +2,7 @@
 pkgname=gatemon-git
 _pkgname=gatemon
 _pkgauthor=FreifunkBremen
-pkgver=r56.c56320f
+pkgver=r69.efa33b7
 pkgrel=1
 pkgdesc="Script to monitor the gateway servers of a Freifunk mesh network for outages"
 arch=('any')
