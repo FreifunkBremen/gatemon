@@ -31,6 +31,9 @@ RUN_FILE="/run/$(basename $(readlink -f $0))"
 # Include config if exists
 if [[ -e /etc/gatemon.cfg ]]; then
   . /etc/gatemon.cfg
+else
+  echo '/etc/gatemon.cfg does not exists' >&2
+  exit 1
 fi
 
 # Check for run file

@@ -3,7 +3,13 @@
 # Set path to a save default
 PATH="$(dirname "$0")/..:/usr/lib/gatemon:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
-. "$(dirname "$0")/../gatemon.cfg"
+# Include config if exists
+if [[ -e /etc/gatemon.cfg ]]; then
+  . /etc/gatemon.cfg
+else
+  echo '/etc/gatemon.cfg does not exists' >&2
+  exit 1
+fi
 
 export TIMEFORMAT="%0R"
 
