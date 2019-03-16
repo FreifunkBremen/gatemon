@@ -37,7 +37,10 @@ install: $(BINS)
 	install -Dm755 check_dhcp $(DESTDIR)$(PREFIX)/opt/gatemon/check_dhcp
 	install -Dm644 gatemon.cfg $(DESTDIR)$(PREFIX)/etc/gatemon.cfg
 	install -Dm644 gatemon.cron $(DESTDIR)$(PREFIX)/etc/cron.d/gatemon
-	install -Dm644 gatemon.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.service
+	install -Dm644 gatemon.root.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.root.service
+	install -Dm644 gatemon.nonroot.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.nonroot.service
+	install -Dm644 gatemon-setup.nonroot.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon-setup.nonroot.service
+	ln -sf /lib/systemd/system/gatemon.root.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.service
 	install -Dm644 gatemon.timer $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.timer
 	install -Dm755 libpacketmark/libpacketmark.so $(DESTDIR)$(PREFIX)/opt/gatemon/libpacketmark/libpacketmark.so
 	install -d $(DESTDIR)$(PREFIX)/opt/gatemon/checks
