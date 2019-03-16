@@ -1,0 +1,21 @@
+[Unit]
+Description=gatemon (Check all services of every gateway)
+After=network-online.target
+Wants=gatemon-setup.nonroot.service
+
+[Service]
+Type=simple
+ExecStart=/opt/gatemon/gatemon.sh
+TimeoutStopSec=300
+KillMode=process
+KillSignal=SIGINT
+AmbientCapabilities=CAP_NET_BIND_SERVICE CAP_NET_RAW
+User=nobody
+Group=nogroup
+ProtectSystem=true
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+
+[Install]
+WantedBy=multi-user.target

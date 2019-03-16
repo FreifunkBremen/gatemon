@@ -1,0 +1,11 @@
+[Unit]
+Description=Setup environment for gatemon
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'while ! /opt/gatemon/gatemon-setup.nonroot.sh; do sleep 10; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
