@@ -94,6 +94,9 @@ else
   CHECK_SUFFIX='-nonroot'
 fi
 
+# Get version
+GATEMON_VERSION="$(<$(dirname "$0")/VERSION)"
+
 # Generate temporary file
 TMP_FILE="$(mktemp)"
 
@@ -102,6 +105,7 @@ cat >"$TMP_FILE" <<EOF
 - uuid: ${HOSTID}
   name: ${MESHMON_NAME}
   provider: ${MESHMON_PROVIDER}
+  version: ${VERSION}
   vpn-servers:
 EOF
 
