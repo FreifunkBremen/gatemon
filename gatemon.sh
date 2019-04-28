@@ -105,7 +105,7 @@ cat >"$TMP_FILE" <<EOF
 - uuid: ${HOSTID}
   name: ${MESHMON_NAME}
   provider: ${MESHMON_PROVIDER}
-  version: ${VERSION}
+  version: ${GATEMON_VERSION}
   vpn-servers:
 EOF
 
