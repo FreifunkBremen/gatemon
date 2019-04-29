@@ -35,6 +35,7 @@ install: $(BINS)
 	install -d $(DESTDIR)$(PREFIX)/opt/gatemon
 	install -Dm755 gatemon.sh $(DESTDIR)$(PREFIX)/opt/gatemon/gatemon.sh
 	install -Dm755 check_dhcp $(DESTDIR)$(PREFIX)/opt/gatemon/check_dhcp
+	install -Dm644 VERSION $(DESTDIR)$(PREFIX)/opt/gatemon/VERSION
 	install -Dm644 gatemon.cfg $(DESTDIR)$(PREFIX)/etc/gatemon.cfg
 	install -Dm644 gatemon.cron $(DESTDIR)$(PREFIX)/etc/cron.d/gatemon
 	install -Dm644 gatemon.root.service $(DESTDIR)$(PREFIX)/lib/systemd/system/gatemon.root.service
