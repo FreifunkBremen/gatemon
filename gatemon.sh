@@ -90,6 +90,8 @@ fi
 
 if [[ "$RUN_AS_ROOT" = '1' ]]; then
   CHECK_SUFFIX='-root'
+
+  $(dirname "$0")/gatemon-setup.nonroot.sh
 else
   CHECK_SUFFIX='-nonroot'
 fi
