@@ -59,7 +59,7 @@ touch "$RUN_FILE"
 
 # Sleep some random time
 # max 60s
-sleep $[ ( $RANDOM % 60 ) + 1 ]s
+sleep $(( ( RANDOM % 60 ) + 1 ))s
 
 # Try to find some unique host identification
 for file in /etc/machine-id /var/lib/dbus/machine-id /etc/hostid; do
@@ -124,6 +124,6 @@ cat >>"$TMP_FILE" <<EOF
 EOF
 
 # Push to master
-if ! curl --max-time 5 --show-error --silent --request POST --data-binary @${TMP_FILE} "${API_URL}?token=${API_TOKEN}" >&2; then
+if ! curl --max-time 5 --show-error --silent --request POST --data-binary @"${TMP_FILE}" "${API_URL}?token=${API_TOKEN}" >&2; then
   echo "Pushing result to server failed." >&2
 fi
