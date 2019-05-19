@@ -25,14 +25,22 @@ VPN_NUMBER=6
 
 RUN_AS_ROOT=1
 
+CONFIG_FILE='/etc/gatemon.cfg'
+
+for ARG in "$@"; do
+  if [[ "$ARG" =~ ^--config-file= ]]; then
+    CONFIG_FILE="${ARG#--config-file=}"
+  fi
+done
+
 # Name of runfile
 RUN_FILE="/run/$(basename $(readlink -f $0))"
 
 # Include config if exists
-if [[ -e /etc/gatemon.cfg ]]; then
-  . /etc/gatemon.cfg
+if [[ -e "$CONFIG_FILE" ]]; then
+  . "$CONFIG_FILE"
 else
-  echo '/etc/gatemon.cfg does not exists' >&2
+  echo "${CONFIG_FILE} does not exists" >&2
   exit 1
 fi
 
