@@ -17,7 +17,7 @@ API_TOKEN=''
 GATEMON_NAME=''
 GATEMON_PROVIDER=''
 
-SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
+SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/babel/site.conf'
 
 NETWORK_DEVICE='eth0'
 HOST_TO_FETCH='google.de'
@@ -88,10 +88,9 @@ if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
   exit 1
 fi
 
-NETWORK4_BASE="$(whitespace_awk "=" '$1 == "prefix4" { gsub("^'"'"'|0*/.*$", "", $2); print $2 }' <<<"$SITE_CONFIG_CONTENT")"
 NETWORK6_BASE="$(whitespace_awk "=" '$1 == "prefix6" { gsub("^'"'"'|/.*$", "", $2); print $2 }' <<<"$SITE_CONFIG_CONTENT")"
 
-if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
+if [[ -z "$NETWORK6_BASE" ]]; then
   echo "Failed to extract network base addresses from site.conf (${#SITE_CONFIG_CONTENT} bytes)!" >&2
   exit 1
 fi
@@ -123,7 +122,7 @@ for GATE in $(seq 1 $VPN_NUMBER); do
   echo "  - name: vpn$(printf '%.2d' ${GATE}).bremen.freifunk.net" >>"$TMP_FILE"
 
   for CHECK in $(dirname "$0")/checks/*${CHECK_SUFFIX}.sh; do
-    "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
+    "$CHECK" "$NETWORK_DEVICE" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
   done
 done
 
