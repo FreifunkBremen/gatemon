@@ -42,8 +42,8 @@ cp gatemon.cron /etc/cron.d/gatemon
 
 Danach musst du /etc/gatemon.cfg bearbeite:
 - setze API_TOKEN auf den geheimen Schluessel, den du bekommen hast
-- benenne mit MESHMON_NAME kurz deinen gatemon (bleibe unter 20 Zeichen)
-- set MESHMON_PROVIDER to the name or short description of your Internet provider
+- benenne mit GATEMON_NAME kurz deinen gatemon (bleibe unter 20 Zeichen)
+- set GATEMON_PROVIDER to the name or short description of your Internet provider
 - set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
 
