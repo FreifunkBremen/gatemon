@@ -1,13 +1,10 @@
 
 DEB_VERSION:=1.0-$(shell date +%Y%m%d%H%M%S -d "$(shell git show -s --format=%cD HEAD)" )-$(shell git rev-parse HEAD | cut -c -8)
-BINS=check_dhcp libpacketmark.so
+BINS=libpacketmark.so
 
 all: $(BINS) deb
 clean:
 	rm -f $(BINS) gatemon_*.deb
-
-check_dhcp: check_dhcp.c
-	$(CC) $(CFLAGS) -o $@ $+
 
 libpacketmark.so:
 	mkdir -p libpacketmark
@@ -34,7 +31,6 @@ install: $(BINS)
 	install -d $(DESTDIR)$(PREFIX)/opt
 	install -d $(DESTDIR)$(PREFIX)/opt/gatemon
 	install -Dm755 gatemon.sh $(DESTDIR)$(PREFIX)/opt/gatemon/gatemon.sh
-	install -Dm755 check_dhcp $(DESTDIR)$(PREFIX)/opt/gatemon/check_dhcp
 	install -Dm644 VERSION $(DESTDIR)$(PREFIX)/opt/gatemon/VERSION
 	install -Dm644 gatemon.cfg $(DESTDIR)$(PREFIX)/etc/gatemon.cfg
 	install -Dm644 gatemon.cron $(DESTDIR)$(PREFIX)/etc/cron.d/gatemon
