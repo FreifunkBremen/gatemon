@@ -20,7 +20,7 @@ pkgver() {
 
 build() {
 	cd "${srcdir}/${_pkgname}"
-	make clean check_dhcp libpacketmark.so
+	make clean libpacketmark.so
 }
 
 package() {

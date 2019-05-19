@@ -4,7 +4,7 @@ Projekt, um die Gateway-Server eines [Freifunk](https://freifunk.net)-Mesh-Netzw
 auf Ausfaelle zu ueberwachen.
 
 Das Programm laeuft regelmaessig und ueberprueft, ob die Internet-Verbindung moeglich
-ist und DNS, DHCP und NTP funktioniert. Jeweils ueber IPv4 und IPv6.
+ist und DNS und NTP funktioniert.
 
 Die Ergebnisse werden auf einen Webserver, auf dem [gatemon-html](https://github.com/FreifunkBremen/gatemon-html)
 laeuft, welches diese dann anzeigt.
@@ -13,9 +13,6 @@ laeuft, welches diese dann anzeigt.
 
 Das Programm muss auf einem Rechner laufen, welcher als normaler Teilnehmer
 im Freifunk-Netz haengt.
-
-Dieser Rechner darf kein DHCP nutzen, da der DHCP-Port von dem DHCP-Test gebraucht wird.
-Deswegen muss dieser eine statische IPv4-Adresse konfiguriert haben.
 
 Ausserdem sollte er NTP-synchronisiert sein, damit er eine akkurate Zeit hat, da
 der gatemon-html-Server die Ergebnisse ansonsten ablehnt.
@@ -35,7 +32,7 @@ die Netzwerkkonfiguration, findest du im [Wiki](https://wiki.bremen.freifunk.net
 apt-get install monitoring-plugins-basic monitoring-plugins-standard dnsutils git make gcc curl
 git clone https://github.com/FreifunkBremen/gatemon /opt/gatemon
 cd /opt/gatemon
-make check_dhcp
+make libpacketmark.so
 cp gatemon.cfg /etc/
 cp gatemon.cron /etc/cron.d/gatemon
 ```
@@ -46,11 +43,3 @@ Danach musst du /etc/gatemon.cfg bearbeite:
 - set GATEMON_PROVIDER to the name or short description of your Internet provider
 - set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
-
-## Update (as root)
-
-```
-cd /opt/gatemon
-git pull --rebase
-make check_dhcp
-```
