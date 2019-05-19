@@ -14,8 +14,8 @@ whitespace_awk() {
 API_URL=''
 API_TOKEN=''
 
-MESHMON_NAME=''
-MESHMON_PROVIDER=''
+GATEMON_NAME=''
+GATEMON_PROVIDER=''
 
 SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
 

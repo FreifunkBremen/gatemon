@@ -14,8 +14,8 @@ whitespace_awk() {
 API_URL=''
 API_TOKEN=''
 
-MESHMON_NAME=''
-MESHMON_PROVIDER=''
+GATEMON_NAME=''
+GATEMON_PROVIDER=''
 
 SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/babel/site.conf'
 
@@ -112,8 +112,8 @@ TMP_FILE="$(mktemp)"
 cat >"$TMP_FILE" <<EOF
 ---
 - uuid: ${HOSTID}
-  name: ${MESHMON_NAME}
-  provider: ${MESHMON_PROVIDER}
+  name: ${GATEMON_NAME}
+  provider: ${GATEMON_PROVIDER}
   version: ${GATEMON_VERSION}
   vpn-servers:
 EOF
