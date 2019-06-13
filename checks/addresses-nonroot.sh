@@ -26,11 +26,10 @@ STATUS_CODE=0
 
 exec 3>&1 4>&2
 ELAPSED_TIME="$( { time check_dhcp -t 30 "$NETWORK_DEVICE" "$SERVER_IP4" 1>&3 2>&4; } 2>&1)"
-exec 3>&- 4>&-
-
 if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
 fi
+exec 3>&- 4>&-
 
 cat <<EOF
         ipv4: ${STATUS_CODE}
