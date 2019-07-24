@@ -13,7 +13,7 @@ else
   exit 1
 fi
 
-export TIMEFORMAT="%0R"
+export TIMEFORMAT="%2R"
 
 NETWORK_DEVICE="$1"
 SERVER_IP4="$2"
@@ -44,7 +44,9 @@ fi
 exec 3>&- 4>&-
 
 cat <<EOF
-        ipv4: ${STATUS_CODE}
+        ipv4:
+          status: ${STATUS_CODE}
+          time: ${ELAPSED_TIME}
 EOF
 
 # IPv6
@@ -59,5 +61,7 @@ fi
 exec 3>&- 4>&-
 
 cat <<EOF
-        ipv6: ${STATUS_CODE}
+        ipv6:
+          status: ${STATUS_CODE}
+          time: ${ELAPSED_TIME}
 EOF
