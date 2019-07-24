@@ -3,7 +3,7 @@
 # Set path to a save default
 PATH="$(dirname "$0")/..:/usr/lib/gatemon:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
-export TIMEFORMAT="%0R"
+export TIMEFORMAT="%2R"
 export LC_ALL=C
 
 NETWORK_DEVICE="$1"
@@ -32,10 +32,14 @@ fi
 exec 3>&- 4>&-
 
 cat <<EOF
-        ipv4: ${STATUS_CODE}
+        ipv4:
+          status: ${STATUS_CODE}
+          time: ${ELAPSED_TIME}
 EOF
 
 # IPv6
 cat <<EOF
-        ipv6: 0
+        ipv6:
+          status: 0
+          time: false
 EOF
