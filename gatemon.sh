@@ -104,6 +104,11 @@ else
   CHECK_SUFFIX='-nonroot'
 fi
 
+# Get node informations
+NODE_INFO="$(curl -s -f http://node.ffhb.de/cgi-bin/nodeinfo)"
+NODE_HOSTNAME="$(jq -r .hostname <<<"$NODE_INFO")"
+NODE_ID="$(jq -r .node_id <<<"$NODE_INFO")"
+
 # Get version
 GATEMON_VERSION="$(<$(dirname "$0")/VERSION)"
 
@@ -116,6 +121,8 @@ cat >"$TMP_FILE" <<EOF
   name: ${GATEMON_NAME}
   provider: ${GATEMON_PROVIDER}
   version: ${GATEMON_VERSION}
+  node-hostname: ${NODE_HOSTNAME}
+  node-id: ${NODE_ID}
   vpn-servers:
 EOF
 
