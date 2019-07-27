@@ -107,13 +107,13 @@ else
 fi
 
 # Get node informations
-NODE_INFO="$(curl --max-time 10 --silent --fail "${NEXT_NODE_URL}/cgi-bin/nodeinfo" || true)"
+NODE_INFO="$(curl --max-time 10 --silent --fail --location "${NEXT_NODE_URL}/cgi-bin/nodeinfo" || true)"
 
 if [[ -n "$NODE_INFO" ]]; then
   NODE_HOSTNAME="$(jq -r .hostname <<<"$NODE_INFO")"
   NODE_ID="$(jq -r .node_id <<<"$NODE_INFO")"
 else
-  NODE_INFO="$(curl --max-time 10 --silent --fail "${NEXT_NODE_URL}/cgi-bin/status")"
+  NODE_INFO="$(curl --max-time 10 --silent --fail --location "${NEXT_NODE_URL}/cgi-bin/status")"
 
   if [[ -z "$NODE_INFO" ]]; then
     echo 'Could not fetch node informations' >&2
