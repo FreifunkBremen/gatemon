@@ -17,6 +17,15 @@ export TIMEFORMAT="%2R"
 NETWORK_DEVICE="$1"
 SERVER_IP4="$2"
 SERVER_IP6="$3"
+TMP_FILE="$(mktemp)"
+
+# Delete lockfile after completion
+cleanup() {
+  if [ -n "$TMP_FILE" -a -f "$TMP_FILE" ]; then
+    rm -f "$TMP_FILE"
+  fi
+}
+trap cleanup EXIT
 
 if [[ -z "$NETWORK_DEVICE" ]] || [[ -z "$SERVER_IP4" ]] || [[ -z "$SERVER_IP6" ]]; then
   echo "$0 <device> <ipv4> <ipv6>" >&2
@@ -29,13 +38,16 @@ cat <<EOF
 EOF
 
 # IPv4
+ERROR_MESSAGE=''
 ELAPSED_TIME=0
 STATUS_CODE=0
 
-exec 3>/dev/null 4>/dev/null
+exec 3>"$TMP_FILE" 4>/dev/null
 ELAPSED_TIME="$( { time dig +short +timeout=10 "$HOST_TO_FETCH" @"$SERVER_IP4" 1>&3 2>&4; } 2>&1)"
 if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
+else
+  ERROR_MESSAGE="$(head -n1 <"$TMP_FILE")"
 fi
 exec 3>&- 4>&-
 
@@ -43,16 +55,22 @@ cat <<EOF
         ipv4:
           status: ${STATUS_CODE}
           time: ${ELAPSED_TIME}
+          error-message: '${ERROR_MESSAGE}'
 EOF
 
+rm -f "$TMP_FILE"
+
 # IPv6
+ERROR_MESSAGE=''
 ELAPSED_TIME=0
 STATUS_CODE=0
 
-exec 3>/dev/null 4>/dev/null
+exec 3>"$TMP_FILE" 4>/dev/null
 ELAPSED_TIME="$( { time dig +short +timeout=10 "$HOST_TO_FETCH" @"$SERVER_IP6" 1>&3 2>&4; } 2>&1)"
 if [[ "$?" = 0 ]]; then
   STATUS_CODE=1
+else
+  ERROR_MESSAGE="$(head -n1 <"$TMP_FILE")"
 fi
 exec 3>&- 4>&-
 
@@ -60,4 +78,5 @@ cat <<EOF
         ipv6:
           status: ${STATUS_CODE}
           time: ${ELAPSED_TIME}
+          error-message: '${ERROR_MESSAGE}'
 EOF
