@@ -120,7 +120,7 @@ else
     exit 1
   else
     NODE_HOSTNAME="$(grep '<dt>Node name</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
-    NODE_ID="$(grep '<dt>Primary MAC address</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
+    NODE_ID="$(grep '<dt>Primary MAC address</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g' -e 's/:/g')"
   fi
 fi
 
