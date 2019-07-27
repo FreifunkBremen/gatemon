@@ -17,6 +17,8 @@ API_TOKEN=''
 GATEMON_NAME=''
 GATEMON_PROVIDER=''
 
+NEXT_NODE_URL='http://node.ffhb.de'
+
 SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
 
 NETWORK_DEVICE='eth0'
@@ -105,9 +107,22 @@ else
 fi
 
 # Get node informations
-NODE_INFO="$(curl -s -f http://node.ffhb.de/cgi-bin/nodeinfo)"
-NODE_HOSTNAME="$(jq -r .hostname <<<"$NODE_INFO")"
-NODE_ID="$(jq -r .node_id <<<"$NODE_INFO")"
+NODE_INFO="$(curl --max-time 10 --silent --fail "${NEXT_NODE_URL}/cgi-bin/nodeinfo" || true)"
+
+if [[ -n "$NODE_INFO" ]]; then
+  NODE_HOSTNAME="$(jq -r .hostname <<<"$NODE_INFO")"
+  NODE_ID="$(jq -r .node_id <<<"$NODE_INFO")"
+else
+  NODE_INFO="$(curl --max-time 10 --silent --fail "${NEXT_NODE_URL}/cgi-bin/status")"
+
+  if [[ -z "$NODE_INFO" ]]; then
+    echo 'Could not fetch node informations' >&2
+    exit 1
+  else
+    NODE_HOSTNAME="$(grep '<dt>Node name</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
+    NODE_ID="$(grep '<dt>Primary MAC address</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
+  fi
+fi
 
 # Get version
 GATEMON_VERSION="$(<$(dirname "$0")/VERSION)"
