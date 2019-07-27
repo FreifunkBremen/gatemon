@@ -3,7 +3,7 @@
 # Set path to a save default
 PATH="$(dirname "$0")/..:/usr/lib/gatemon:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
-LD_PRELOAD="$(dirname "$0")/../libpacketmark/libpacketmark.so"
+export LD_PRELOAD="$(dirname "$0")/../libpacketmark/libpacketmark.so"
 
 # Include config if exists
 if [[ -e /etc/gatemon.cfg ]]; then
