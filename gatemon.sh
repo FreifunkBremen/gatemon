@@ -19,7 +19,7 @@ GATEMON_PROVIDER=''
 
 NEXT_NODE_URL='http://node.ffhb.de'
 
-SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/site.conf'
+SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/domains/ffhb_legacy.conf'
 
 NETWORK_DEVICE='eth0'
 HOST_TO_FETCH='google.de'
