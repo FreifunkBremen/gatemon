@@ -124,6 +124,9 @@ else
   fi
 fi
 
+# Get current VPN server
+CURRENT_VPN_SERVER_IP_ADDRESS="$(mtr --report-cycles 1 --report-wide --no-dns -4 8.8.8.8 | awk '/1\.\|/ { print $2 }')"
+
 # Get version
 GATEMON_VERSION="$(<$(dirname "$0")/VERSION)"
 
@@ -135,6 +138,7 @@ cat >"$TMP_FILE" <<EOF
 - uuid: ${HOSTID}
   name: ${GATEMON_NAME}
   provider: ${GATEMON_PROVIDER}
+  current_vpn_server: ${CURRENT_VPN_SERVER_IP_ADDRESS}
   version: ${GATEMON_VERSION}
   node-hostname: ${NODE_HOSTNAME}
   node-id: ${NODE_ID}
