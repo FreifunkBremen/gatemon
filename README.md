@@ -32,7 +32,7 @@ Anleitung, wie man einen gatemon auf einem Raspberry Pi installiert, insbesonder
 die Netzwerkkonfiguration, findest du im [Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren).
 
 ```
-apt-get install monitoring-plugins-basic monitoring-plugins-standard dnsutils git make gcc curl jq
+apt-get install monitoring-plugins-basic monitoring-plugins-standard dnsutils git make gcc libc6-dev curl jq
 git clone https://github.com/FreifunkBremen/gatemon /opt/gatemon
 cd /opt/gatemon
 make check_dhcp
