@@ -1,1 +1,0 @@
-ntp-nonroot.sh

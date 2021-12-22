@@ -99,11 +99,7 @@ if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
 fi
 
 if [[ "$RUN_AS_ROOT" = '1' ]]; then
-  CHECK_SUFFIX='-root'
-
   $(dirname "$0")/gatemon-setup.nonroot.sh
-else
-  CHECK_SUFFIX='-nonroot'
 fi
 
 # Get node informations
@@ -148,7 +144,7 @@ EOF
 for GATE in $(seq 1 $VPN_NUMBER); do
   echo "  - name: vpn$(printf '%.2d' ${GATE}).bremen.freifunk.net" >>"$TMP_FILE"
 
-  for CHECK in $(dirname "$0")/checks/*${CHECK_SUFFIX}.sh; do
+  for CHECK in $(dirname "$0")/checks/*.sh; do
     "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
   done
 done
