@@ -19,11 +19,10 @@ GATEMON_PROVIDER=''
 
 NEXT_NODE_URL='http://node.ffhb.de'
 
-SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/domains/ffhb_legacy.conf'
+SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/domains/ffhb_batv15.conf'
 
 NETWORK_DEVICE='eth0'
 HOST_TO_FETCH='google.de'
-VPN_NUMBER=6
 
 RUN_AS_ROOT=1
 
@@ -141,7 +140,7 @@ cat >"$TMP_FILE" <<EOF
   vpn-servers:
 EOF
 
-for GATE in $(seq 1 $VPN_NUMBER); do
+for GATE in 7 8 9 10; do
   echo "  - name: vpn$(printf '%.2d' ${GATE}).bremen.freifunk.net" >>"$TMP_FILE"
 
   for CHECK in $(dirname "$0")/checks/*.sh; do
