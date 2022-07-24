@@ -17,7 +17,7 @@ API_TOKEN=''
 GATEMON_NAME=''
 GATEMON_PROVIDER=''
 
-SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/domains/ffhb_legacy.conf'
+SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/domains/ffhb_batv15.conf'
 
 NETWORK_DEVICE='ffhb-mesh'
 HOST_TO_FETCH='meineip.moritzrudert.de'
