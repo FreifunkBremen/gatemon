@@ -126,7 +126,7 @@ CURRENT_VPN_SERVER_IP_ADDRESS="$(mtr --report-cycles 1 --report-wide --no-dns -4
 GATEMON_VERSION="$(<$(dirname "$0")/VERSION)"
 
 # Generate temporary file
-TMP_FILE="$(mktemp)"
+TMP_FILE="$(mktemp --tmpdir gatemon.XXXXXXXX)"
 
 cat >"$TMP_FILE" <<EOF
 ---
