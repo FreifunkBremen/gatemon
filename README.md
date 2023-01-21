@@ -36,6 +36,7 @@ apt-get install curl dnsutils gcc git jq libc6-dev make monitoring-plugins-basic
 git clone https://github.com/FreifunkBremen/gatemon /opt/gatemon
 cd /opt/gatemon
 make check_dhcp
+make -C libpacketmark
 cp gatemon.cfg /etc/
 cp gatemon.cron /etc/cron.d/gatemon
 ```
