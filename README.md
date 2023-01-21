@@ -1,35 +1,33 @@
 # Gatemon
 
-Projekt, um die Gateway-Server eines [Freifunk](https://freifunk.net)-Mesh-Netzwerks
-auf Ausfaelle zu ueberwachen.
+Project to monitor the gateway servers of a [freifunk](https://freifunk.net) mesh network
+for outages.
 
-Das Programm laeuft regelmaessig und ueberprueft, ob die Internet-Verbindung moeglich
-ist und DNS, DHCP und NTP funktioniert. Jeweils ueber IPv4 und IPv6.
+The program runs regularly and checks whether the Internet connection is possible
+and DNS, DHCP and NTP are working. Each over IPv4 and IPv6.
 
-Die Ergebnisse werden auf einen Webserver, auf dem [gatemon-html](https://github.com/FreifunkBremen/gatemon-html)
-laeuft, welches diese dann anzeigt.
+The results will be sent to a web server running [gatemon-html](https://github.com/FreifunkBremen/gatemon-html)
+which then displays them.
 
-## Abhaengigkeiten
+## Dependencies
 
-Das Programm muss auf einem Rechner laufen, welcher als normaler Teilnehmer
-im Freifunk-Netz haengt.
+The program must run on a computer, which is a normal participant in the
+in the freifunk network.
 
-Dieser Rechner darf kein DHCP nutzen, da der DHCP-Port von dem DHCP-Test gebraucht wird.
-Deswegen muss dieser eine statische IPv4-Adresse konfiguriert haben.
+This computer must not use DHCP, because the DHCP port is used by the DHCP check.
+Therefore it must have a static IPv4 address configured.
 
-Ausserdem sollte er NTP-synchronisiert sein, damit er eine akkurate Zeit hat, da
-der gatemon-html-Server die Ergebnisse ansonsten ablehnt.
+It should be NTP synchronized to have an accurate time, because
+otherwise the gatemon-html server will reject the results.
 
-Danach braucht du einen geheimen Schluessel, damit dein Gatemon Daten an den zentralen
-Server senden darf.
+After that you need a secret key to allow your gatemon to send data to the central server.
 
-Diesen bekommst du zur Zeit von genofire, jplitza, mortzu oder ollibaba -
-einfach im Chat fragen.
+You can get it from genofire, jplitza, mortzu or ollibaba - just ask in the chat.
 
-## Installation (als root)
+## Installation (as root)
 
-Anleitung, wie man einen gatemon auf einem Raspberry Pi installiert, insbesondere
-die Netzwerkkonfiguration, findest du im [Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren).
+A tutorial on how to install a gatemon on a Raspberry Pi, in particular
+the network configuration, can be found in the [Wiki](https://wiki.bremen.freifunk.net/Anleitungen/Gatemon-mit-Raspberry-Pi-installieren).
 
 ```
 apt-get install curl dnsutils gcc git jq libc6-dev make monitoring-plugins-basic monitoring-plugins-standard mtr-tiny
@@ -41,9 +39,9 @@ cp gatemon.cfg /etc/
 cp gatemon.cron /etc/cron.d/gatemon
 ```
 
-Danach musst du /etc/gatemon.cfg bearbeite:
-- setze API_TOKEN auf den geheimen Schluessel, den du bekommen hast
-- benenne mit GATEMON_NAME kurz deinen gatemon (bleibe unter 20 Zeichen)
+After that you have to edit /etc/gatemon.cfg:
+- set API_TOKEN to the secret key you got
+- use GATEMON_NAME to name your gatemon (stay under 20 characters)
 - set GATEMON_PROVIDER to the name or short description of your Internet provider
 - set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
