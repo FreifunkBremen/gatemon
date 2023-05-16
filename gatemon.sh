@@ -1,16 +1,12 @@
 #! /usr/bin/env bash
 
+# Exit on error
 set -e
 
 # Set path to a save default
 PATH="$(dirname "$0"):/usr/lib/gatemon/:/usr/lib/nagios/plugins:/usr/lib/monitoring-plugins:/bin:/usr/bin:/sbin:/usr/sbin"
 
-whitespace_awk() {
-  SEP="$1"
-  shift
-  awk -v 'RS=\n[\t ]*' -F' +'"$SEP"' +' "$@"
-}
-
+# Initialize variables
 API_URL=''
 API_TOKEN=''
 
@@ -26,41 +22,44 @@ HOST_TO_FETCH='google.de'
 
 RUN_AS_ROOT=1
 
+declare -a VPN_NUMBER
+
 CONFIG_FILE='/etc/gatemon.cfg'
 
+# Parse command line arguments
 for ARG in "$@"; do
-  if [[ "$ARG" =~ ^--config-file= ]]; then
-    CONFIG_FILE="${ARG#--config-file=}"
-  fi
+    if [[ "$ARG" =~ ^--config-file= ]]; then
+        CONFIG_FILE="${ARG#--config-file=}"
+    fi
 done
 
 # Name of runfile
-RUN_FILE="/run/$(basename $(readlink -f $0))"
+RUN_FILE="/run/$(basename "$(readlink --canonicalize "$0")")"
 
 # Include config if exists
 if [[ -e "$CONFIG_FILE" ]]; then
-  . "$CONFIG_FILE"
+    . "$CONFIG_FILE"
 else
-  echo "${CONFIG_FILE} does not exists" >&2
-  exit 1
+    echo "${CONFIG_FILE} does not exists" >&2
+    exit 1
 fi
 
 # Check for run file
 if [[ -f "$RUN_FILE" ]]; then
-  echo 'Runfile does exist!' >&2
-  exit 1
+    echo 'Runfile does exist!' >&2
+    exit 1
 fi
 
 # Script finish job
 function finish {
-  # Remove run file
-  if [[ -n "$RUN_FILE" ]]; then
-    rm -f "$RUN_FILE"
-  fi
+    # Remove run file
+    if [[ -n "$RUN_FILE" ]]; then
+        rm -f "$RUN_FILE"
+    fi
 
-  if [[ -n "$TMP_FILE" ]]; then
-    rm -f "$TMP_FILE"
-  fi
+    if [[ -n "$TMP_FILE" ]]; then
+        rm -f "$TMP_FILE"
+    fi
 }
 
 trap finish EXIT
@@ -72,58 +71,65 @@ sleep $(( ( RANDOM % 60 ) + 1 ))s
 
 # Try to find some unique host identification
 for file in /etc/machine-id /var/lib/dbus/machine-id /etc/hostid; do
-  if [[ -r "$file" ]]; then
-    HOSTID="$(<"$file")"
-    break
-  fi
+    if [[ -r "$file" ]]; then
+        HOSTID="$(<"$file")"
+        break
+    fi
 done
 
 if [[ -z "$HOSTID" ]]; then
-  echo 'Could not determine unique host ID.' >&2
-  exit 1
+    echo 'Could not determine unique host ID.' >&2
+    exit 1
 fi
 
+# Fetch site config
 SITE_CONFIG_CONTENT=$(curl --max-time 5 --header 'Cache-Control: no-cache' --silent --show-error "$SITE_CONFIG_URL")
 if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
-  echo 'Failed to download site.conf!' >&2
-  exit 1
+    echo 'Failed to download site.conf!' >&2
+    exit 1
 fi
 
-NETWORK4_BASE="$(whitespace_awk "=" '$1 == "prefix4" { gsub("^'"'"'|0*/.*$", "", $2); print $2 }' <<<"$SITE_CONFIG_CONTENT")"
-NETWORK6_BASE="$(whitespace_awk "=" '$1 == "prefix6" { gsub("^'"'"'|/.*$", "", $2); print $2 }' <<<"$SITE_CONFIG_CONTENT")"
+# Get VPN server numbers
+readarray -t VPN_NUMBER <<< "$(grep --perl-regexp --only-matching '\s+vpn(0)?\K.+(?=\s+=\s+{)' <<<"$SITE_CONFIG_CONTENT")"
 
-if [[ -z "$NETWORK4_BASE" ]] || [[ -z "$NETWORK6_BASE" ]]; then
-  echo "Failed to extract network base addresses from site.conf (${#SITE_CONFIG_CONTENT} bytes)!" >&2
-  exit 1
+# Extract network base addresses
+NETWORK4_BASE="$(grep --perl-regexp --only-matching "\s+prefix4\s+=\s+'\K.+\.(?=\d/\d+',)" <<<"$SITE_CONFIG_CONTENT")"
+NETWORK6_BASE="$(grep --perl-regexp --only-matching "\s+prefix6\s+=\s+'\K.+(?=/\d+',)" <<<"$SITE_CONFIG_CONTENT")"
+
+if [[ -z "$NETWORK4_BASE" ]] || \
+   [[ -z "$NETWORK6_BASE" ]]; then
+    echo "Failed to extract network base addresses from site.conf (${#SITE_CONFIG_CONTENT} bytes)!" >&2
+    exit 1
 fi
 
+# Setup routing tables if running as root
 if [[ "$RUN_AS_ROOT" = '1' ]]; then
-  $(dirname "$0")/gatemon-setup.nonroot.sh
+    "$(dirname "$0")/gatemon-setup.nonroot.sh"
 fi
 
 # Get node informations
 NODE_INFO="$(curl --max-time 10 --silent --fail --location "${NEXT_NODE_URL}/cgi-bin/nodeinfo" || true)"
 
 if [[ -n "$NODE_INFO" ]]; then
-  NODE_HOSTNAME="$(jq -r .hostname <<<"$NODE_INFO")"
-  NODE_ID="$(jq -r .node_id <<<"$NODE_INFO")"
+    NODE_HOSTNAME="$(jq --raw-output .hostname <<<"$NODE_INFO")"
+    NODE_ID="$(jq --raw-output .node_id <<<"$NODE_INFO")"
 else
-  NODE_INFO="$(curl --max-time 10 --silent --fail --location "${NEXT_NODE_URL}/cgi-bin/status")"
+    NODE_INFO="$(curl --max-time 10 --silent --fail --location "${NEXT_NODE_URL}/cgi-bin/status")"
 
-  if [[ -z "$NODE_INFO" ]]; then
-    echo 'Could not fetch node informations' >&2
-    exit 1
-  else
-    NODE_HOSTNAME="$(grep '<dt>Node name</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
-    NODE_ID="$(grep '<dt>Primary MAC address</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g' -e 's/://g')"
-  fi
+    if [[ -z "$NODE_INFO" ]]; then
+        echo 'Could not fetch node informations' >&2
+        exit 1
+    else
+        NODE_HOSTNAME="$(grep '<dt>Node name</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
+        NODE_ID="$(grep '<dt>Primary MAC address</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g' -e 's/://g')"
+    fi
 fi
 
 # Get current VPN server
-CURRENT_VPN_SERVER_IP_ADDRESS="$(mtr --report-cycles 1 --report-wide --no-dns -4 8.8.8.8 | awk '/1\.\|/ { print $2 }')"
+CURRENT_VPN_SERVER_IP_ADDRESS="$(mtr --report-cycles 1 --report-wide --no-dns -4 "$HOST_TO_FETCH" | grep --perl-regexp '^\s+1\.\|\-\-\s+' | awk '{ print $2 }')"
 
 # Get version
-GATEMON_VERSION="$(<$(dirname "$0")/VERSION)"
+GATEMON_VERSION="$(<"$(dirname "$0")/VERSION")"
 
 # Generate temporary file
 TMP_FILE="$(mktemp --tmpdir gatemon.XXXXXXXX)"
@@ -140,12 +146,14 @@ cat >"$TMP_FILE" <<EOF
   vpn-servers:
 EOF
 
-for GATE in 7 8 9 10; do
-  echo "  - name: vpn$(printf '%.2d' ${GATE}).bremen.freifunk.net" >>"$TMP_FILE"
+# Iterate over VPN servers
+for GATE in $(seq "${VPN_NUMBER[0]}" "${VPN_NUMBER[-1]}"); do
+    echo "  - name: vpn$(printf '%.2d' "$GATE").bremen.freifunk.net" >>"$TMP_FILE"
 
-  for CHECK in $(dirname "$0")/checks/*.sh; do
-    "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
-  done
+    # Run checks
+    for CHECK in "$(dirname "$0")/checks"/*.sh; do
+        "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
+    done
 done
 
 cat >>"$TMP_FILE" <<EOF
@@ -154,5 +162,5 @@ EOF
 
 # Push to master
 if ! curl --max-time 5 --show-error --silent --request POST --data-binary @"${TMP_FILE}" "${API_URL}?token=${API_TOKEN}" >&2; then
-  echo "Pushing result to server failed." >&2
+    echo "Pushing result to server failed." >&2
 fi
