@@ -10,9 +10,11 @@ NETWORK_DEVICE="$1"
 SERVER_IP4="$2"
 SERVER_IP6="$3"
 
-if [[ -z "$NETWORK_DEVICE" ]] || [[ -z "$SERVER_IP4" ]] || [[ -z "$SERVER_IP6" ]]; then
-  echo "$0 <device> <ipv4> <ipv6>" >&2
-  exit 1
+if [[ -z "$NETWORK_DEVICE" ]] || \
+   [[ -z "$SERVER_IP4" ]] || \
+   [[ -z "$SERVER_IP6" ]]; then
+    echo "$0 <device> <ipv4> <ipv6>" >&2
+    exit 1
 fi
 
 cat <<EOF
@@ -27,7 +29,7 @@ STATUS_CODE=0
 exec 3>&1 4>&2
 ELAPSED_TIME="$( { time check_dhcp -t 30 "$NETWORK_DEVICE" "$SERVER_IP4" 1>&3 2>&4; } 2>&1)"
 if [[ "$?" = 0 ]]; then
-  STATUS_CODE=1
+    STATUS_CODE=1
 fi
 exec 3>&- 4>&-
 
