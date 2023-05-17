@@ -4,7 +4,7 @@
 set -e
 
 # Set path to a save default
-PATH="/bin:/usr/bin:/sbin:/usr/sbin"
+PATH='/bin:/usr/bin:/sbin:/usr/sbin'
 
 # Initialize variables
 SITE_CONFIG_URL='https://raw.githubusercontent.com/FreifunkBremen/gluon-site-ffhb/master/domains/ffhb_batv15.conf'
@@ -30,6 +30,12 @@ readarray -t VPN_NUMBER <<< "$(grep --perl-regexp --only-matching '\s+vpn(0)?\K.
 # Extract network addresses
 NETWORK4="$(grep --perl-regexp --only-matching "\s+prefix4\s+=\s+'\K.+(?=',)" <<<"$SITE_CONFIG_CONTENT")"
 NETWORK6="$(grep --perl-regexp --only-matching "\s+prefix6\s+=\s+'\K.+(?=',)" <<<"$SITE_CONFIG_CONTENT")"
+
+if [[ -z "$NETWORK4" ]] || \
+   [[ -z "$NETWORK6" ]]; then
+    echo "Failed to extract network addresses from site.conf (${#SITE_CONFIG_CONTENT} bytes)!" >&2
+    exit 1
+fi
 
 # Extract network base addresses
 NETWORK4_BASE="$(grep --perl-regexp --only-matching "\s+prefix4\s+=\s+'\K.+\.(?=\d/\d+',)" <<<"$SITE_CONFIG_CONTENT")"

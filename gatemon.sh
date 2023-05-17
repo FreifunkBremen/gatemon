@@ -84,7 +84,7 @@ if [[ -z "$HOSTID" ]]; then
 fi
 
 # Fetch site config
-SITE_CONFIG_CONTENT=$(curl --max-time 5 --header 'Cache-Control: no-cache' --silent --show-error "$SITE_CONFIG_URL")
+SITE_CONFIG_CONTENT="$(curl --max-time 5 --header 'Cache-Control: no-cache' --silent --show-error "$SITE_CONFIG_URL")"
 if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
     echo 'Failed to download site.conf!' >&2
     exit 1
@@ -121,8 +121,8 @@ else
         echo 'Could not fetch node informations' >&2
         exit 1
     else
-        NODE_HOSTNAME="$(grep '<dt>Node name</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g')"
-        NODE_ID="$(grep '<dt>Primary MAC address</dt>' <<<"$NODE_INFO" | awk -F'</dt>' '{ print $2 }' | sed -e 's/<[^>]*>//g' -e 's/://g')"
+        NODE_HOSTNAME="$(grep --perl-regexp --only-matching '<dt>Node name<\/dt><dd>\K.+(?=<\/dd>)' <<<"$NODE_INFO")"
+        NODE_ID="$(grep --perl-regexp --only-matching '<dt>Primary MAC address<\/dt><dd>\K.+(?=<\/dd>)' <<<"$NODE_INFO")"
     fi
 fi
 
@@ -143,7 +143,7 @@ cat >"$TMP_FILE" <<EOF
   current_vpn_server: ${CURRENT_VPN_SERVER_IP_ADDRESS}
   version: ${GATEMON_VERSION}
   node-hostname: ${NODE_HOSTNAME}
-  node-id: ${NODE_ID}
+  node-id: ${NODE_ID//:/}
   vpn-servers:
 EOF
 
