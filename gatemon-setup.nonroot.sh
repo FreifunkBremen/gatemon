@@ -41,7 +41,9 @@ if [[ -z "$NETWORK4_BASE" ]] || \
     exit 1
 fi
 
+# Iterate over VPN servers
 for GATE in $(seq "${VPN_NUMBER[0]}" "${VPN_NUMBER[-1]}"); do
+    # Check if route is already set
     if [[ -z "$(ip -4 route list "$NETWORK4" table $(( 100 + GATE )) 2>/dev/null)" ]]; then
         # Add network device route to routing table
         ip route add "$NETWORK4" dev "$NETWORK_DEVICE" table $(( 100 + GATE ))
@@ -51,6 +53,7 @@ for GATE in $(seq "${VPN_NUMBER[0]}" "${VPN_NUMBER[-1]}"); do
         ip rule add fwmark "$GATE" table $(( 100 + GATE ))
     fi
 
+    # Check if route is already set
     if [[ -z "$(ip -6 route list "$NETWORK6" table $(( 100 + GATE )) 2>/dev/null)" ]]; then
         # Add network device route to routing table
         ip -6 route add "$NETWORK6" dev "$NETWORK_DEVICE" table $(( 100 + GATE ))

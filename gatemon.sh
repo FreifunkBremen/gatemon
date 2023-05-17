@@ -50,7 +50,8 @@ if [[ -f "$RUN_FILE" ]]; then
     exit 1
 fi
 
-# Script finish job
+# Remove run and tmp file
+# on exit
 function finish {
     # Remove run file
     if [[ -n "$RUN_FILE" ]]; then
