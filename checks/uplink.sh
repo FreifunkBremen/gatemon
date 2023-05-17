@@ -25,7 +25,7 @@ TMP_FILE="$(mktemp)"
 cleanup() {
   if [[ -n "$TMP_FILE" ]] && \
      [[ -f "$TMP_FILE" ]]; then
-      rm -f "$TMP_FILE"
+      rm --force "$TMP_FILE"
   fi
 }
 trap cleanup EXIT
@@ -66,7 +66,7 @@ cat <<EOF
           error-message: '${ERROR_MESSAGE}'
 EOF
 
-rm -f "$TMP_FILE"
+rm --force "$TMP_FILE"
 
 # IPv6
 ERROR_MESSAGE=''

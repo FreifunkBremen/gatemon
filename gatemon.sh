@@ -54,11 +54,11 @@ fi
 function finish {
     # Remove run file
     if [[ -n "$RUN_FILE" ]]; then
-        rm -f "$RUN_FILE"
+        rm --force "$RUN_FILE"
     fi
 
     if [[ -n "$TMP_FILE" ]]; then
-        rm -f "$TMP_FILE"
+        rm --force "$TMP_FILE"
     fi
 }
 

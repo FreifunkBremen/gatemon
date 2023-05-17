@@ -25,7 +25,7 @@ if [[ -z "$SITE_CONFIG_CONTENT" ]]; then
 fi
 
 # Get VPN server numbers
-readarray -t VPN_NUMBER <<< "$(grep -Po '\s+vpn(0)?\K.+(?=\s+=\s+{)' <<<"$SITE_CONFIG_CONTENT")"
+readarray -t VPN_NUMBER <<< "$(grep --perl-regexp --only-matching '\s+vpn(0)?\K.+(?=\s+=\s+{)' <<<"$SITE_CONFIG_CONTENT")"
 
 # Extract network addresses
 NETWORK4="$(grep --perl-regexp --only-matching "\s+prefix4\s+=\s+'\K.+(?=',)" <<<"$SITE_CONFIG_CONTENT")"
