@@ -36,7 +36,6 @@ cd /opt/gatemon
 make check_dhcp
 make -C libpacketmark
 cp gatemon.cfg /etc/
-cp gatemon.cron /etc/cron.d/gatemon
 ```
 
 After that you have to edit /etc/gatemon.cfg:
@@ -46,10 +45,43 @@ After that you have to edit /etc/gatemon.cfg:
 - set NETWORK_DEVICE to your freifunk interface (i.e. eth0)
 - leave the other entries unchanged, or ask the admin of your gatemon-html server for correct settings
 
+There are several ways to run gatemon regularly:
+
+### Running periodic with cron
+
+The classic way is to run gatemon via cron:
+
+```
+cp gatemon.cron /etc/cron.d/gatemon
+```
+
+### Running periodic with systemd timers
+
+The modern way is to run gatemon via systemd-timer:
+
+```
+cp gatemon.root.service /etc/systemd/system/gatemon.service
+cp gatemon.timer /etc/systemd/system/gatemon.timer
+systemctl --now enable gatemon.timer
+```
+
+### Running peridic with systemd timers (as non-root)
+
+If you want to run the actual gatemon script as non-root,
+the setup script (which sets routes and rules) must be run as root first.
+
+```
+cp gatemon-setup.nonroot.service /etc/systemd/system/gatemon-setup.nonroot.service
+cp gatemon.nonroot.service /etc/systemd/system/gatemon.service
+cp gatemon.timer /etc/systemd/system/gatemon.timer
+systemctl --now enable gatemon-setup.nonroot.service gatemon.timer
+```
+
 ## Update (as root)
 
 ```
 cd /opt/gatemon
 git pull --rebase
 make check_dhcp
+make -C libpacketmark
 ```
