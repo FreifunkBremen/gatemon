@@ -48,6 +48,7 @@ fi
 # Check for run file
 if [[ -f "$RUN_FILE" ]]; then
     echo 'Runfile does exist!' >&2
+    ls -l "$RUN_FILE"
     exit 1
 fi
 
