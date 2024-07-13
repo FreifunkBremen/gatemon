@@ -38,6 +38,7 @@ RUN_FILE="/run/$(basename "$(readlink --canonicalize "$0")")"
 
 # Include config if exists
 if [[ -e "$CONFIG_FILE" ]]; then
+    # shellcheck source=gatemon.cfg
     . "$CONFIG_FILE"
 else
     echo "${CONFIG_FILE} does not exists" >&2

@@ -14,6 +14,7 @@ declare -a VPN_NUMBER
 
 # Include config if exists
 if [[ -e /etc/gatemon.cfg ]]; then
+    # shellcheck source=gatemon.cfg
     . /etc/gatemon.cfg
 fi
 
