@@ -132,6 +132,10 @@ CURRENT_VPN_SERVER_IP_ADDRESS="$(mtr --report-cycles 1 --report-wide --no-dns -4
 
 # Get version
 GATEMON_VERSION="$(<"$(dirname "$0")/VERSION")"
+GIT_VERSION=$(git --git-dir="$(dirname "$0")/.git/" describe --always --abbrev=7 --dirty=+ 2>/dev/null || true)
+if [[ -n "$GIT_VERSION" ]]; then
+  GATEMON_VERSION="$GATEMON_VERSION-g$GIT_VERSION"
+fi
 
 # Generate temporary file
 TMP_FILE="$(mktemp --tmpdir gatemon.XXXXXXXX)"
