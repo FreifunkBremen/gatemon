@@ -64,7 +64,7 @@ for GATE in $(seq "${VPN_NUMBER[0]}" "${VPN_NUMBER[-1]}"); do
         # Add network device route to routing table
         ip -6 route add "$NETWORK6" dev "$NETWORK_DEVICE" table $(( 100 + GATE ))
         # Add default route to routing table
-        ip -6 route add default via "${NETWORK6_BASE}${GATE}" dev "$NETWORK_DEVICE" table $(( 100 + GATE ))
+        ip -6 route add default via "${NETWORK6_BASE}$(printf "%x" "$GATE")" dev "$NETWORK_DEVICE" table $(( 100 + GATE ))
         # Add firewall mark for routing table
         ip -6 rule add fwmark "$GATE" table $(( 100 + GATE ))
     fi

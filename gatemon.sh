@@ -153,7 +153,7 @@ for GATE in $(seq "${VPN_NUMBER[0]}" "${VPN_NUMBER[-1]}"); do
 
     # Run checks
     for CHECK in "$(dirname "$0")/checks"/*.sh; do
-        "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}${GATE}" "$GATE" >> "$TMP_FILE"
+        "$CHECK" "$NETWORK_DEVICE" "${NETWORK4_BASE}${GATE}" "${NETWORK6_BASE}$(printf "%x" "$GATE")" "$GATE" >> "$TMP_FILE"
     done
 done
 
